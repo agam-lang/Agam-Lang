@@ -1,0 +1,58 @@
+# Agam-Lang Organization Root .gitignore
+
+# Sub-repos (each has its own git)
+agam/
+agam-async/
+agam-book/
+agam-by-example/
+agam-cli/
+agam-crypto/
+agam-db/
+agam-http/
+agam-intellij/
+agam-json/
+agam-lang.github.io/
+agam-ml/
+agam-vscode/
+agam-web/
+agamlab/
+awesome-agam/
+benchmarks/
+examples/
+registry-index/
+rfcs/
+sdk-packs/
+.github/
+
+# Archived (removed locally)
+governance/
+playground/
+std/
+agam-clean/
+
+# Generated
+graphify-out/
+*.pyc
+__pycache__/
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp / scratch
+*.log
+temp.txt
+test_output*.txt
+read_funcs.txt
+
+# One-off scripts (already used)
+fix_*.py
+push_*.py
+scaffold.py
+setup_*.py
+generate_*.py
