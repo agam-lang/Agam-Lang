@@ -15,34 +15,45 @@ The highest-priority work is **Tier 0: Foundation Completion**. These are credib
 
 ### Build Order Within Tier 0
 
-1. **Phase F1: Formal Grammar Specification**
+1. **Phase F1: Formal Grammar Specification** ✅ complete
    - Write complete EBNF/PEG grammar for all three syntax modes
    - Mechanically test against all existing `.agam` sources
    - No code dependencies — can start immediately
    - Detail: `details/F1.md`
 
-2. **Phase F2: Type System Completion**
+2. **Phase F6: Indic Grammatical Design Principles** 🔨 in-progress
+   - Design philosophy drawn from Pāṇini's Aṣṭādhyāyī and Tamil Tolkāppiyam
+   - 7 principles: dhātu (naming), vibhakti (roles), sandhi (type composition), samāsa (compounds), anuvṛtti (defaults), pratyāhāra (constraint shorthands), oṭṭu (fluent chains)
+   - Shapes HOW F2–F5 are implemented — should complete before/during those phases
+   - No code dependencies — design specification document
+   - Detail: `details/F6.md`
+
+3. **Phase F2: Type System Completion**
    - Generics, sum types/enums, pattern matching, type inference, Option/Result
    - This is the critical path — most Tier 1+ work depends on it
+   - Informed by F6: sandhi table (type composition), pratyāhāra (constraint shorthands)
    - Detail: `details/F2.md`
 
-3. **Phase F3: Object Model Completion**
+4. **Phase F3: Object Model Completion**
    - struct/trait/impl end-to-end through all compiler passes
    - Depends on F2 (generics for trait bounds)
+   - Informed by F6: anuvṛtti (contextual defaults), samāsa (compound patterns)
    - Detail: `details/F3.md`
 
-4. **Phase F4: Module System and Visibility**
+5. **Phase F4: Module System and Visibility**
    - pub/private visibility, qualified imports, re-exports
    - Can be partially parallelized with F2/F3
    - Detail: `details/F4.md`
 
-5. **Phase F5: Ergonomics and Syntax Cohesion**
+6. **Phase F5: Ergonomics and Syntax Cohesion**
    - Named args, defaults, destructuring, string interpolation, ranges
    - Builds on F2/F3 type and object foundations
+   - Informed by F6: vibhakti (semantic role labels), dhātu (naming conventions)
    - Detail: `details/F5.md`
 
 ### Parallel Opportunities
 
+- **F6** (design principles) has zero code dependencies and shapes all subsequent phases — highest parallel value
 - **F1** (grammar spec) has zero code dependencies and can be done alongside any other work
 - **F4** (modules) is mostly orthogonal to F2/F3 and can overlap
 - **DX1** (error messages) can start during F2 since parser recovery is independent of type system design

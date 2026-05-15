@@ -41,23 +41,25 @@ These phases are **credibility-critical**. Without them, experienced engineers c
 
 | Phase | Status | Focus | Detail |
 |-------|--------|-------|--------|
-| **F1** | open | Formal grammar specification (EBNF/PEG for all syntax modes) | `details/F1.md` |
+| **F1** | complete | Formal grammar specification (EBNF/PEG for all syntax modes) | `details/F1.md` |
 | **F2** | open | Type system completion (generics, enums, inference, Option/Result) | `details/F2.md` |
 | **F3** | open | Object model completion (struct/trait/impl end-to-end) | `details/F3.md` |
 | **F4** | open | Module system and visibility (pub/private, qualified imports) | `details/F4.md` |
 | **F5** | open | Ergonomics (named args, defaults, destructuring, interpolation) | `details/F5.md` |
+| **F6** | **in-progress** | **Indic grammatical design principles** (dhātu, vibhakti, sandhi, pratyāhāra) | `details/F6.md` |
 
 ## Queued: Tier 1 — Developer Experience
 
 | Phase | Status | Focus | Detail |
 |-------|--------|-------|--------|
 | **DX1** | open | Elite error messages with recovery and suggestions | `details/DX1.md` |
-| **DX2** | open | LSP production quality (completion, hover, go-to-def) | `details/DX2.md` |
+| **DX2** | open | LSP production quality + AI agent grounding (LSIF, MCP) | `details/DX2.md` |
 | **DX3** | open | Documentation generation (`agamc doc`) | `details/DX3.md` |
 | **DX4** | open | Debugger integration (DWARF, CodeView, DAP) | `details/DX4.md` |
 | **DX5** | open | Testing framework maturity (`agamc test` full surface) | `details/DX5.md` |
 | **GUI5** | open | **Zero-friction visual toolchain** (hot-reload, preview) | `details/GUI5.md` |
 | **PKG1** | partial | **Unified "One Tool" build system** (compiler = pkg mgr) | `details/PKG1.md` |
+| **AGENT1** | open | **Compiler-as-Agent-Tool** (MCP server, SARIF, agent SDK) | `details/AGENT1.md` |
 
 ## Queued: Tier 2 — Runtime, Concurrency, and Security
 
@@ -74,8 +76,8 @@ These phases are **credibility-critical**. Without them, experienced engineers c
 
 | Phase | Status | Focus | Detail |
 |-------|--------|-------|--------|
-| **P1** | open | WASM backend (web playground, edge computing) | `details/P1.md` |
-| **P2** | open | Cross-compilation matrix (extends 15H) | `details/P2.md` |
+| **P1** | open | WASM backend (Component Model, WASI 0.2+, WIT interfaces) | `details/P1.md` |
+| **P2** | open | Cross-compilation matrix (zero-config, Zig-style) | `details/P2.md` |
 | **P3** | open | Package manager production quality (remote registry) | `details/P3.md` |
 | **P4** | open | Web playground and documentation site | `details/P4.md` |
 | **FFI1** | open | **Universal FFI** (C/C++/Python/Rust/Java/JS zero-friction interop) | `details/FFI1.md` |
@@ -83,25 +85,27 @@ These phases are **credibility-critical**. Without them, experienced engineers c
 | **GUI3** | open | **Modern component ecosystem** (100+ widgets, theme engine) | `details/GUI3.md` |
 | **PKG4** | open | **Zero-config foreign build** (drop .c/.py, it works) | `details/PKG4.md` |
 | **PKG5** | open | **Decentralized federated registry** (multi-source, mirrors) | `details/PKG5.md` |
+| **RISCV1** | open | **RISC-V backend validation** (RVA23, AI extensions, QEMU CI) | `details/RISCV1.md` |
 
 ## Queued: Tier 4 — Performance and Optimization
 
 | Phase | Status | Focus | Detail |
 |-------|--------|-------|--------|
-| **O1** | open | Advanced LLVM optimization (PGO, LTO, auto-vectorization) | `details/O1.md` |
+| **O1** | open | Advanced LLVM 22+ optimization (PGO, LTO, auto-vectorization) | `details/O1.md` |
 | **O2** | open | Compile-time execution (comptime) | `details/O2.md` |
 | **O3** | open | Advanced DSA and scientific computing (was Phase 24) | `details/O3.md` |
 | **O4** | open | Machine-code control (was Phase 25) | `details/O4.md` |
-| **O5** | partial | GPU/NPU completion (finish Phase 23 remaining) | `details/O5.md` |
+| **O5** | partial | GPU/NPU completion (safe types, warp primitives, finish Phase 23) | `details/O5.md` |
 | **META1** | open | **Metaprogramming and macro system** (DSLs, derive, code generation) | `details/META1.md` |
 | **HW1** | open | **Hardware introspection** (cache-aware compilation, auto-acceleration) | `details/HW1.md` |
 | **GUI2** | open | **Hardware-accelerated visual engine** (120 FPS GPU rendering) | `details/GUI2.md` |
+| **IR1** | open | **Multi-level IR architecture** (dialect-extensible MIR, MLIR-inspired) | `details/IR1.md` |
 
 ## Queued: Tier 5 — AI-Native Differentiation
 
 | Phase | Status | Focus | Detail |
 |-------|--------|-------|--------|
-| **AI1** | open | Autodiff and tensor types (language-native) | `details/AI1.md` |
+| **AI1** | open | Autodiff (Enzyme-style IR-level) and tensor types (language-native) | `details/AI1.md` |
 | **AI2** | open | ML training loop primitives | `details/AI2.md` |
 | **AI3** | open | Ecosystem integration (Python interop, ONNX) | `details/AI3.md` |
 

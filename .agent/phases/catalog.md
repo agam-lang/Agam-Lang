@@ -1,8 +1,8 @@
 # Phase Catalog
 
-The complete roadmap for Agam — organized into **strategic tiers**. Agam's design is built on **22 foundational pillars** that together make it the world's most complete omni-language.
+The complete roadmap for Agam — organized into **strategic tiers**. Agam's design is built on **29 foundational pillars** that together make it the world's most complete omni-language.
 
-## The 22 Pillars of Agam
+## The 28 Pillars of Agam
 
 | # | Pillar | Phases |
 |---|--------|--------|
@@ -28,6 +28,13 @@ The complete roadmap for Agam — organized into **strategic tiers**. Agam's des
 | 20 | **Supply Chain Fortress** — Signed packages, capability sandbox, SBOM | PKG3 |
 | 21 | **Zero-Config Foreign Build** — Drop .c/.py/.rs in, it just works | PKG4 |
 | 22 | **Decentralized Registry** — Federated, mirrored, no single point of failure | PKG5 |
+| 23 | **Agent-Native** — MCP server, SARIF diagnostics, AI grounding API | AGENT1 |
+| 24 | **Multi-Level IR** — Dialect-extensible IR for heterogeneous targets | IR1 |
+| 25 | **Observability** — Native OpenTelemetry, compiler tracing, @trace/@metric | OBS1 |
+| 26 | **Multi-Tier Isolation** — Deno-style permissions, MicroVM sandboxing | SAND1 |
+| 27 | **Zero-Copy IPC** — Compile-time layout, shared memory, zero-cost serialization | SERIAL1 |
+| 28 | **Edge AI** — Compile-time model import, embedded inference, ONNX native | EDGE1 |
+| 29 | **Indic Grammar Foundations** — Paninian/Tamil design principles: dhātu naming, vibhakti roles, sandhi types, pratyāhāra constraints | F6 |
 
 ## Tier Structure
 
@@ -60,7 +67,7 @@ The complete roadmap for Agam — organized into **strategic tiers**. Agam's des
 
 ## Tier 0: Foundation Completion
 
-> Pillars: 2, 11, **16**
+> Pillars: 2, 11, **16**, **29**
 
 | # | Phase | Focus | Detail |
 |---|-------|-------|--------|
@@ -69,6 +76,7 @@ The complete roadmap for Agam — organized into **strategic tiers**. Agam's des
 | 16 | `F3` | Object Model (struct/trait/impl) | `details/F3.md` |
 | 17 | `F4` | Module System and Visibility | `details/F4.md` |
 | 18 | `F5` | Ergonomics (named args, closures, destructuring) | `details/F5.md` |
+| — | `F6` | **Indic Grammatical Design Principles** (dhātu, vibhakti, sandhi, pratyāhāra) | `details/F6.md` |
 | 19 | `GUI4` | **Declarative & Reactive UI Syntax** | `details/GUI4.md` |
 
 ---
@@ -80,12 +88,14 @@ The complete roadmap for Agam — organized into **strategic tiers**. Agam's des
 | # | Phase | Focus | Detail |
 |---|-------|-------|--------|
 | 20 | `DX1` | Elite Error Messages (recovery, suggestions) | `details/DX1.md` |
-| 21 | `DX2` | LSP Production Quality | `details/DX2.md` |
+| 21 | `DX2` | LSP Production Quality + AI Agent Grounding | `details/DX2.md` |
 | 22 | `DX3` | Documentation Generation | `details/DX3.md` |
 | 23 | `DX4` | Debugger Integration (DWARF, DAP) | `details/DX4.md` |
 | 24 | `DX5` | Testing Framework Maturity | `details/DX5.md` |
 | 25 | `GUI5` | **Zero-Friction Visual Toolchain** | `details/GUI5.md` |
 | 26 | `PKG1` | **Unified "One Tool" Build System** (compiler = pkg mgr) | `details/PKG1.md` |
+| 27 | `AGENT1` | **Compiler-as-Agent-Tool** (MCP server, SARIF, agent SDK) | `details/AGENT1.md` |
+| 28 | `TEST1` | **Advanced Testing** (property-based, fuzzing, doctests, snapshots) | `details/TEST1.md` |
 
 ---
 
@@ -101,6 +111,9 @@ The complete roadmap for Agam — organized into **strategic tiers**. Agam's des
 | 30 | `SEC1` | **World-Class Cybersecurity** | `details/SEC1.md` |
 | 31 | `PKG2` | **Immutable Reproducibility** (crypto lockfile, hermetic builds) | `details/PKG2.md` |
 | 32 | `PKG3` | **Supply Chain Fortress** (signing, capability sandbox, SBOM) | `details/PKG3.md` |
+| 33 | `OBS1` | **Native Observability** (OpenTelemetry, @trace, compiler tracing) | `details/OBS1.md` |
+| 34 | `SAND1` | **Multi-Tier Sandboxing** (Deno-style permissions, MicroVM isolation) | `details/SAND1.md` |
+| 35 | `SERIAL1` | **Zero-Copy Serialization & IPC** (packed structs, shared memory) | `details/SERIAL1.md` |
 
 ---
 
@@ -110,8 +123,8 @@ The complete roadmap for Agam — organized into **strategic tiers**. Agam's des
 
 | # | Phase | Focus | Detail |
 |---|-------|-------|--------|
-| 33 | `P1` | WASM Backend | `details/P1.md` |
-| 34 | `P2` | Cross-Compilation Matrix | `details/P2.md` |
+| 33 | `P1` | WASM Backend (Component Model, WASI 0.2+) | `details/P1.md` |
+| 34 | `P2` | Cross-Compilation Matrix (zero-config, Zig-style) | `details/P2.md` |
 | 35 | `P3` | Package Manager Production Quality | `details/P3.md` |
 | 36 | `P4` | Web Playground and Documentation Site | `details/P4.md` |
 | 37 | `FFI1` | **Universal FFI** (C/C++/Python/Rust/Java/JS) | `details/FFI1.md` |
@@ -119,6 +132,8 @@ The complete roadmap for Agam — organized into **strategic tiers**. Agam's des
 | 39 | `GUI3` | **Modern Component Ecosystem** | `details/GUI3.md` |
 | 40 | `PKG4` | **Zero-Config Foreign Build** (drop .c/.py, it works) | `details/PKG4.md` |
 | 41 | `PKG5` | **Decentralized Federated Registry** | `details/PKG5.md` |
+| 42 | `GENUI1` | **Generative UI** (agent-driven component composition, A2UI) | `details/GENUI1.md` |
+| 42 | `RISCV1` | **RISC-V Backend Validation** (RVA23, AI extensions) | `details/RISCV1.md` |
 
 ---
 
@@ -128,14 +143,15 @@ The complete roadmap for Agam — organized into **strategic tiers**. Agam's des
 
 | # | Phase | Focus | Detail |
 |---|-------|-------|--------|
-| 42 | `O1` | Advanced LLVM Optimization (PGO, LTO) | `details/O1.md` |
-| 43 | `O2` | Compile-Time Execution (comptime) | `details/O2.md` |
-| 44 | `O3` | Advanced DSA and Scientific Computing | `details/O3.md` |
-| 45 | `O4` | Machine-Code Control (inline asm) | `details/O4.md` |
-| 46 | `O5` | GPU/NPU Completion | `details/O5.md` |
-| 47 | `META1` | **Metaprogramming and Macro System** | `details/META1.md` |
-| 48 | `HW1` | **Hardware Introspection** | `details/HW1.md` |
-| 49 | `GUI2` | **Hardware-Accelerated Visual Engine** (120 FPS GPU) | `details/GUI2.md` |
+| 43 | `O1` | Advanced LLVM 22+ Optimization (PGO, LTO) | `details/O1.md` |
+| 44 | `O2` | Compile-Time Execution (comptime) | `details/O2.md` |
+| 45 | `O3` | Advanced DSA and Scientific Computing | `details/O3.md` |
+| 46 | `O4` | Machine-Code Control (inline asm) | `details/O4.md` |
+| 47 | `O5` | GPU/NPU Completion (safe types, warp primitives) | `details/O5.md` |
+| 48 | `META1` | **Metaprogramming and Macro System** | `details/META1.md` |
+| 49 | `HW1` | **Hardware Introspection** | `details/HW1.md` |
+| 50 | `GUI2` | **Hardware-Accelerated Visual Engine** (120 FPS GPU) | `details/GUI2.md` |
+| 51 | `IR1` | **Multi-Level IR Architecture** (dialect-extensible MIR) | `details/IR1.md` |
 
 ---
 
@@ -145,9 +161,11 @@ The complete roadmap for Agam — organized into **strategic tiers**. Agam's des
 
 | # | Phase | Focus | Detail |
 |---|-------|-------|--------|
-| 50 | `AI1` | Autodiff and Tensor Types | `details/AI1.md` |
-| 51 | `AI2` | ML Training Loop Primitives | `details/AI2.md` |
-| 52 | `AI3` | Ecosystem Integration (Python, ONNX) | `details/AI3.md` |
+| 52 | `AI1` | Autodiff (Enzyme-style IR-level) and Tensor Types | `details/AI1.md` |
+| 53 | `AI2` | ML Training Loop Primitives | `details/AI2.md` |
+| 54 | `AI3` | Ecosystem Integration (Python, ONNX) | `details/AI3.md` |
+| 55 | `PROB1` | **Probabilistic Programming** (Bayesian inference, sample/observe) | `details/PROB1.md` |
+| 56 | `EDGE1` | **Edge AI Inference** (ONNX import, quantization, embedded deploy) | `details/EDGE1.md` |
 
 ---
 
@@ -157,10 +175,10 @@ The complete roadmap for Agam — organized into **strategic tiers**. Agam's des
 
 | # | Phase | Focus | Detail |
 |---|-------|-------|--------|
-| 53 | `X1` | Self-Hosting | `details/X1.md` |
-| 54 | `X2` | Formal Verification | `details/X2.md` |
-| 55 | `X3` | Quantum and ZKP Primitives | `details/X3.md` |
-| 56 | `AIC1` | **AI-Native Compiler Intelligence** | `details/AIC1.md` |
+| 55 | `X1` | Self-Hosting | `details/X1.md` |
+| 56 | `X2` | Formal Verification | `details/X2.md` |
+| 57 | `X3` | Quantum and ZKP Primitives | `details/X3.md` |
+| 58 | `AIC1` | **AI-Native Compiler Intelligence** | `details/AIC1.md` |
 
 ---
 
@@ -169,12 +187,12 @@ The complete roadmap for Agam — organized into **strategic tiers**. Agam's des
 | Category | Files |
 |----------|-------|
 | Legacy | `details/foundation-00-05.md` through `details/23.md` |
-| Tier 0 | `details/F1.md`–`F5.md`, `details/GUI4.md` |
-| Tier 1 | `details/DX1.md`–`DX5.md`, `details/GUI5.md`, **`details/PKG1.md`** |
-| Tier 2 | `details/R1.md`–`R3.md`, `details/SEC1.md`, **`details/PKG2.md`**, **`details/PKG3.md`** |
-| Tier 3 | `details/P1.md`–`P4.md`, `details/FFI1.md`, `details/GUI1.md`, `details/GUI3.md`, **`details/PKG4.md`**, **`details/PKG5.md`** |
-| Tier 4 | `details/O1.md`–`O5.md`, `details/META1.md`, `details/HW1.md`, `details/GUI2.md` |
-| Tier 5 | `details/AI1.md`–`AI3.md` |
+| Tier 0 | `details/F1.md`–`F6.md`, `details/GUI4.md` |
+| Tier 1 | `details/DX1.md`–`DX5.md`, `details/GUI5.md`, **`details/PKG1.md`**, **`details/AGENT1.md`**, **`details/TEST1.md`** |
+| Tier 2 | `details/R1.md`–`R3.md`, `details/SEC1.md`, **`details/PKG2.md`**, **`details/PKG3.md`**, **`details/OBS1.md`**, **`details/SAND1.md`**, **`details/SERIAL1.md`** |
+| Tier 3 | `details/P1.md`–`P4.md`, `details/FFI1.md`, `details/GUI1.md`, `details/GUI3.md`, **`details/PKG4.md`**, **`details/PKG5.md`**, **`details/RISCV1.md`**, **`details/GENUI1.md`** |
+| Tier 4 | `details/O1.md`–`O5.md`, `details/META1.md`, `details/HW1.md`, `details/GUI2.md`, **`details/IR1.md`** |
+| Tier 5 | `details/AI1.md`–`AI3.md`, **`details/PROB1.md`**, **`details/EDGE1.md`** |
 | Tier 6 | `details/X1.md`–`X3.md`, `details/AIC1.md` |
 | Architecture | `docs/architecture/compiler-architecture.md`, `docs/architecture/gui-architecture.md` |
 | Strategy | `next.md` |

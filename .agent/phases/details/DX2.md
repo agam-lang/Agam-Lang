@@ -45,6 +45,19 @@ Transform the existing `agam_lsp` crate from a stub into a production-quality La
 - [ ] Organize imports
 - [ ] Add missing trait methods
 
+### AI Agent Grounding (NEW — 2026 industry alignment)
+- [ ] LSIF (Language Server Index Format) export for static code intelligence
+- [ ] Semantic verification endpoints for AI agent grounding (symbol existence, type queries)
+- [ ] MCP (Model Context Protocol) bridge: LSP → MCP tool exposure (coordinates with AGENT1)
+- [ ] AI-powered inline completions: expose AI suggestion API alongside traditional completions
+
+## Design References
+
+- **LSP in 2026**: LSP is now the "semantic backbone" for development environments, serving both traditional compiler analysis and AI-assisted coding tools.
+- **LSIF**: Enables IDE features in static environments (GitHub code navigation). Critical for Agam discoverability.
+- **JetBrains LSP expansion (2025)**: IntelliJ Platform now has open LSP API. Agam's LSP should target both VS Code and JetBrains IDEs.
+- **AI grounding**: AI agents (Claude Code, Cursor) use LSP to verify that generated code is semantically correct. Agam's LSP should be designed for this use case from the start.
+
 ## Responsible Crates
 
 - `agam_lsp` — LSP server implementation
@@ -55,9 +68,11 @@ Transform the existing `agam_lsp` crate from a stub into a production-quality La
 
 - Phase F2 (type system) — type hover and inference hints require type information
 - Phase DX1 (error messages) — diagnostic infrastructure reused in LSP
+- Phase AGENT1 (Compiler-as-Agent-Tool) — MCP server coordinates with LSP
 
 ## Test Strategy
 
 - LSP protocol conformance tests using the official LSP test framework
 - Integration tests with VS Code extension
 - Response time benchmarks (completion should feel instant, <100ms)
+- LSIF output validation against GitHub code navigation
