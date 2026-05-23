@@ -40,6 +40,7 @@ Since Agam uses LLVM, basic RISC-V compilation comes "almost free" — but expli
 ## Design References
 
 - **RVA23 Profile**: Stable RISC-V application processor baseline. Includes RVV 1.0 (vector), Zba/Zbb/Zbs (bit manipulation).
+- **RVCC (RISC-V Compiler Collaboration)**: An LLVM incubator project to fast-track RISC-V performance optimizations into LLVM trunk.
 - **RISC-V AI Extensions**: AME (Attached Matrix Extension) for tensor processing. Future Agam GPU/NPU pipeline could target these.
 - **Zig's approach**: Zero-config cross-compilation with bundled sysroots. Agam should aspire to `agamc build --target riscv64-linux` working without extra toolchain installation.
 

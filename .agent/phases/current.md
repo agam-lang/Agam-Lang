@@ -46,7 +46,7 @@ These phases are **credibility-critical**. Without them, experienced engineers c
 | **F3** | open | Object model completion (struct/trait/impl end-to-end) | `details/F3.md` |
 | **F4** | open | Module system and visibility (pub/private, qualified imports) | `details/F4.md` |
 | **F5** | open | Ergonomics (named args, defaults, destructuring, interpolation) | `details/F5.md` |
-| **F6** | **in-progress** | **Indic grammatical design principles** (dhātu, vibhakti, sandhi, pratyāhāra) | `details/F6.md` |
+| **F6** | complete | Indic grammatical design principles (dhātu, vibhakti, sandhi, pratyāhāra) | `details/F6.md` |
 
 ## Queued: Tier 1 — Developer Experience
 

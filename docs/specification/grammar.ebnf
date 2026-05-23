@@ -1,0 +1,160 @@
+start: pragma* module
+
+pragma: "@" IDENT ("." IDENT)* _NEWLINE
+
+module: (_NEWLINE | declaration)*
+
+declaration: visibility? annotation* decl_kind
+decl_kind: function_decl
+         | struct_decl
+         | enum_decl
+         | trait_decl
+         | impl_decl
+         | module_decl
+         | use_decl
+         | effect_decl
+         | handler_decl
+         | statement
+
+visibility: "pub"
+
+annotation: "@" IDENT ("." IDENT)*
+
+function_decl: "async"? "fn" IDENT LPAREN param_list? RPAREN ("->" type_expr)? body?
+body: block | ":" block | ":" statement _NEWLINE
+
+param_list: param ("," param)* ","?
+param: pattern (":" type_expr)? ("=" expr)?
+
+struct_decl: ("struct" | "class") IDENT struct_body
+struct_body: ":" _NEWLINE _INDENT field_decl* _DEDENT | LBRACE field_decl* RBRACE
+field_decl: visibility? IDENT ":" type_expr ("=" expr)? ","? _NEWLINE?
+
+enum_decl: "enum" IDENT enum_body
+enum_body: ":" _NEWLINE _INDENT variant_decl* _DEDENT | LBRACE variant_decl* RBRACE
+variant_decl: IDENT (LPAREN type_list RPAREN)? ","? _NEWLINE?
+
+trait_decl: "trait" IDENT trait_body
+trait_body: ":" _NEWLINE _INDENT function_decl* _DEDENT | LBRACE function_decl* RBRACE
+
+impl_decl: "impl" type_expr impl_body
+impl_body: ":" _NEWLINE _INDENT declaration* _DEDENT | LBRACE declaration* RBRACE
+
+module_decl: "mod" IDENT
+
+use_decl: ("use" | "import") path ("as" IDENT)?
+
+effect_decl: "effect" IDENT effect_body
+effect_body: ":" _NEWLINE _INDENT effect_op* _DEDENT | LBRACE effect_op* RBRACE
+effect_op: "fn" IDENT LPAREN param_list? RPAREN ("->" type_expr)? ";" _NEWLINE?
+
+handler_decl: "handle" IDENT "for" IDENT handler_body
+handler_body: ":" _NEWLINE _INDENT handler_clause* _DEDENT | LBRACE handler_clause* RBRACE
+handler_clause: "fn" IDENT LPAREN ident_list? RPAREN ":" expr ";" _NEWLINE?
+
+ident_list: IDENT ("," IDENT)* ","?
+type_list: type_expr ("," type_expr)* ","?
+
+statement: let_stmt
+         | var_stmt
+         | const_stmt
+         | return_stmt
+         | break_stmt
+         | continue_stmt
+         | while_stmt
+         | for_stmt
+         | loop_stmt
+         | if_stmt
+         | expr_stmt
+
+stmt_end: (";" | _NEWLINE)+
+
+let_stmt: "let" "mut"? pattern (":" type_expr)? ("=" expr)? stmt_end
+var_stmt: "var" pattern (":" type_expr)? ("=" expr)? stmt_end
+const_stmt: "const" IDENT (":" type_expr)? "=" expr stmt_end
+return_stmt: "return" expr? stmt_end
+break_stmt: "break" stmt_end
+continue_stmt: "continue" stmt_end
+while_stmt: "while" expr block
+for_stmt: "for" pattern "in" expr block
+loop_stmt: "loop" block
+if_stmt: "if" expr block ("else" (if_stmt | block))?
+expr_stmt: expr stmt_end
+
+block: ":" _NEWLINE _INDENT (_NEWLINE | statement)* _DEDENT | LBRACE (_NEWLINE | statement)* RBRACE
+
+pattern: IDENT
+       | IDENT ":" type_expr
+
+type_expr: path ("<" type_list ">")?
+         | "fn" LPAREN type_list? RPAREN ("->" type_expr)?
+         | "[" type_expr "]"
+         | "(" type_list ")"
+         | "dyn"
+         | "Self"
+
+expr: logic_or (("=" | "+=" | "-=" | "*=" | "/=" | "%=") logic_or)*
+
+?logic_or: logic_and ("||" logic_and)*
+?logic_and: eq_expr ("&&" eq_expr)*
+?eq_expr: comp_expr (("==" | "!=") comp_expr)*
+?comp_expr: bit_or (("<"|"<="|">"|">=") bit_or)*
+?bit_or: bit_xor ("|" bit_xor)*
+?bit_xor: bit_and ("^" bit_and)*
+?bit_and: shift_expr ("&" shift_expr)*
+?shift_expr: add_expr (("<<"|">>") add_expr)*
+?add_expr: mul_expr (("+"|"-") mul_expr)*
+?mul_expr: unary_expr (("*"|"/"|"%") unary_expr)*
+
+?unary_expr: ("-"|"!"|"~") unary_expr
+           | "await" unary_expr
+           | "try" unary_expr
+           | primary
+
+?primary: atom (postfix)*
+
+?postfix: "." IDENT
+        | LPAREN arg_list? RPAREN
+        | LBRACKET expr RBRACKET
+        | "?"
+
+arg_list: arg ("," arg)* ","?
+arg: (IDENT "=")? expr
+
+?atom: INT | FLOAT | STRING | FSTRING | RSTRING | "true" | "false" | "self"
+     | path
+     | "[" arg_list? "]"
+     | "(" expr ")"
+     | "match" expr ":" match_body
+     | closure
+
+closure: "|" ident_list? "|" expr
+
+match_body: ":" _NEWLINE _INDENT match_arm* _DEDENT | LBRACE match_arm* RBRACE
+match_arm: pattern "=>" expr ","? _NEWLINE?
+
+path: IDENT ("::" IDENT)*
+
+IDENT: /[a-zA-Z_][a-zA-Z0-9_]*/
+INT: /[0-9]+/
+FLOAT: /[0-9]+\.[0-9]+/
+STRING: /"[^"]*"/ | /'[^']*'/
+FSTRING.2: /f"[^"]*"/ | /f'[^']*'/
+RSTRING.2: /r"[^"]*"/ | /r'[^']*'/
+
+LPAREN: "("
+RPAREN: ")"
+LBRACE: "{"
+RBRACE: "}"
+LBRACKET: "["
+RBRACKET: "]"
+
+%declare _INDENT _DEDENT
+_NEWLINE: ( /\r?\n[\t ]*/ | /#[^\n]*\n[\t ]*/ )+
+COMMENT: "//" /[^\n]*/
+BLOCK_COMMENT: "/*" /(.|\n)*?/ "*/"
+
+%ignore COMMENT
+%ignore BLOCK_COMMENT
+%ignore /[\t \f]+/
+%ignore /#[^\n]*/

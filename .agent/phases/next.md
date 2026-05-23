@@ -21,7 +21,7 @@ The highest-priority work is **Tier 0: Foundation Completion**. These are credib
    - No code dependencies — can start immediately
    - Detail: `details/F1.md`
 
-2. **Phase F6: Indic Grammatical Design Principles** 🔨 in-progress
+2. **Phase F6: Indic Grammatical Design Principles** ✅ complete
    - Design philosophy drawn from Pāṇini's Aṣṭādhyāyī and Tamil Tolkāppiyam
    - 7 principles: dhātu (naming), vibhakti (roles), sandhi (type composition), samāsa (compounds), anuvṛtti (defaults), pratyāhāra (constraint shorthands), oṭṭu (fluent chains)
    - Shapes HOW F2–F5 are implemented — should complete before/during those phases

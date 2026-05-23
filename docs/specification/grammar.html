@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agam Language Grammar Specification</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 2rem; }
+        h1 { border-bottom: 2px solid #eaecef; padding-bottom: 0.3em; }
+        .grammar-block { background: #f6f8fa; border-radius: 6px; padding: 16px; overflow-x: auto; font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; font-size: 14px; }
+        .rule-name { color: #005cc5; font-weight: bold; }
+        .string-literal { color: #22863a; }
+        .operator { color: #d73a49; }
+        .terminal { color: #6f42c1; font-weight: bold; }
+        .comment { color: #6a737d; font-style: italic; }
+    </style>
+</head>
+<body>
+    <h1>Agam Language Formal Grammar</h1>
+    <p>This document specifies the formal EBNF grammar for the Agam programming language. This grammar handles both base (indentation-sensitive) and advance (brace-delimited) syntax modes.</p>
+    
+    <h2>EBNF Reference</h2>
+    <div class="grammar-block">
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"start"</span>>start</span><span class=<span class="string-literal">"operator"</span>>:</span> pragma<span class="operator">*</span> module<br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"pragma"</span>>pragma</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"@"</span> IDENT (<span class="string-literal">"."</span> IDENT)<span class="operator">*</span> _NEWLINE<br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"module"</span>>module</span><span class=<span class="string-literal">"operator"</span>>:</span> (_NEWLINE <span class="operator">|</span> declaration)<span class="operator">*</span><br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"declaration"</span>>declaration</span><span class=<span class="string-literal">"operator"</span>>:</span> visibility<span class="operator">?</span> annotation<span class="operator">*</span> decl_kind<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"decl_kind"</span>>decl_kind</span><span class=<span class="string-literal">"operator"</span>>:</span> function_decl<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> struct_decl<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> enum_decl<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> trait_decl<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> impl_decl<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> module_decl<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> use_decl<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> effect_decl<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> handler_decl<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> statement<br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"visibility"</span>>visibility</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"pub"</span><br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"annotation"</span>>annotation</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"@"</span> IDENT (<span class="string-literal">"."</span> IDENT)<span class="operator">*</span><br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"function_decl"</span>>function_decl</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"async"</span><span class="operator">?</span> <span class="string-literal">"fn"</span> IDENT LPAREN param_list<span class="operator">?</span> RPAREN (<span class="string-literal">"->"</span> type_expr)<span class="operator">?</span> body<span class="operator">?</span><br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"body"</span>>body</span><span class=<span class="string-literal">"operator"</span>>:</span> block <span class="operator">|</span> <span class="string-literal">":"</span> block <span class="operator">|</span> <span class="string-literal">":"</span> statement _NEWLINE<br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"param_list"</span>>param_list</span><span class=<span class="string-literal">"operator"</span>>:</span> param (<span class="string-literal">","</span> param)<span class="operator">*</span> <span class="string-literal">","</span><span class="operator">?</span><br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"param"</span>>param</span><span class=<span class="string-literal">"operator"</span>>:</span> pattern (<span class="string-literal">":"</span> type_expr)<span class="operator">?</span> (<span class="string-literal">"="</span> expr)<span class="operator">?</span><br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"struct_decl"</span>>struct_decl</span><span class=<span class="string-literal">"operator"</span>>:</span> (<span class="string-literal">"struct"</span> <span class="operator">|</span> <span class="string-literal">"class"</span>) IDENT struct_body<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"struct_body"</span>>struct_body</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">":"</span> _NEWLINE _INDENT field_decl<span class="operator">*</span> _DEDENT <span class="operator">|</span> LBRACE field_decl<span class="operator">*</span> RBRACE<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"field_decl"</span>>field_decl</span><span class=<span class="string-literal">"operator"</span>>:</span> visibility<span class="operator">?</span> IDENT <span class="string-literal">":"</span> type_expr (<span class="string-literal">"="</span> expr)<span class="operator">?</span> <span class="string-literal">","</span><span class="operator">?</span> _NEWLINE<span class="operator">?</span><br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"enum_decl"</span>>enum_decl</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"enum"</span> IDENT enum_body<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"enum_body"</span>>enum_body</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">":"</span> _NEWLINE _INDENT variant_decl<span class="operator">*</span> _DEDENT <span class="operator">|</span> LBRACE variant_decl<span class="operator">*</span> RBRACE<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"variant_decl"</span>>variant_decl</span><span class=<span class="string-literal">"operator"</span>>:</span> IDENT (LPAREN type_list RPAREN)<span class="operator">?</span> <span class="string-literal">","</span><span class="operator">?</span> _NEWLINE<span class="operator">?</span><br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"trait_decl"</span>>trait_decl</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"trait"</span> IDENT trait_body<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"trait_body"</span>>trait_body</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">":"</span> _NEWLINE _INDENT function_decl<span class="operator">*</span> _DEDENT <span class="operator">|</span> LBRACE function_decl<span class="operator">*</span> RBRACE<br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"impl_decl"</span>>impl_decl</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"impl"</span> type_expr impl_body<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"impl_body"</span>>impl_body</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">":"</span> _NEWLINE _INDENT declaration<span class="operator">*</span> _DEDENT <span class="operator">|</span> LBRACE declaration<span class="operator">*</span> RBRACE<br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"module_decl"</span>>module_decl</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"mod"</span> IDENT<br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"use_decl"</span>>use_decl</span><span class=<span class="string-literal">"operator"</span>>:</span> (<span class="string-literal">"use"</span> <span class="operator">|</span> <span class="string-literal">"import"</span>) path (<span class="string-literal">"as"</span> IDENT)<span class="operator">?</span><br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"effect_decl"</span>>effect_decl</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"effect"</span> IDENT effect_body<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"effect_body"</span>>effect_body</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">":"</span> _NEWLINE _INDENT effect_op<span class="operator">*</span> _DEDENT <span class="operator">|</span> LBRACE effect_op<span class="operator">*</span> RBRACE<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"effect_op"</span>>effect_op</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"fn"</span> IDENT LPAREN param_list<span class="operator">?</span> RPAREN (<span class="string-literal">"->"</span> type_expr)<span class="operator">?</span> <span class="string-literal">";"</span> _NEWLINE<span class="operator">?</span><br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"handler_decl"</span>>handler_decl</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"handle"</span> IDENT <span class="string-literal">"for"</span> IDENT handler_body<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"handler_body"</span>>handler_body</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">":"</span> _NEWLINE _INDENT handler_clause<span class="operator">*</span> _DEDENT <span class="operator">|</span> LBRACE handler_clause<span class="operator">*</span> RBRACE<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"handler_clause"</span>>handler_clause</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"fn"</span> IDENT LPAREN ident_list<span class="operator">?</span> RPAREN <span class="string-literal">":"</span> expr <span class="string-literal">";"</span> _NEWLINE<span class="operator">?</span><br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"ident_list"</span>>ident_list</span><span class=<span class="string-literal">"operator"</span>>:</span> IDENT (<span class="string-literal">","</span> IDENT)<span class="operator">*</span> <span class="string-literal">","</span><span class="operator">?</span><br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"type_list"</span>>type_list</span><span class=<span class="string-literal">"operator"</span>>:</span> type_expr (<span class="string-literal">","</span> type_expr)<span class="operator">*</span> <span class="string-literal">","</span><span class="operator">?</span><br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"statement"</span>>statement</span><span class=<span class="string-literal">"operator"</span>>:</span> let_stmt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> var_stmt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> const_stmt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> return_stmt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> break_stmt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> continue_stmt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> while_stmt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> for_stmt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> loop_stmt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> if_stmt<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> expr_stmt<br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"stmt_end"</span>>stmt_end</span><span class=<span class="string-literal">"operator"</span>>:</span> (<span class="string-literal">";"</span> <span class="operator">|</span> _NEWLINE)<span class="operator">+</span><br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"let_stmt"</span>>let_stmt</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"let"</span> <span class="string-literal">"mut"</span><span class="operator">?</span> pattern (<span class="string-literal">":"</span> type_expr)<span class="operator">?</span> (<span class="string-literal">"="</span> expr)<span class="operator">?</span> stmt_end<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"var_stmt"</span>>var_stmt</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"var"</span> pattern (<span class="string-literal">":"</span> type_expr)<span class="operator">?</span> (<span class="string-literal">"="</span> expr)<span class="operator">?</span> stmt_end<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"const_stmt"</span>>const_stmt</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"const"</span> IDENT (<span class="string-literal">":"</span> type_expr)<span class="operator">?</span> <span class="string-literal">"="</span> expr stmt_end<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"return_stmt"</span>>return_stmt</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"return"</span> expr<span class="operator">?</span> stmt_end<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"break_stmt"</span>>break_stmt</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"break"</span> stmt_end<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"continue_stmt"</span>>continue_stmt</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"continue"</span> stmt_end<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"while_stmt"</span>>while_stmt</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"while"</span> expr block<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"for_stmt"</span>>for_stmt</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"for"</span> pattern <span class="string-literal">"in"</span> expr block<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"loop_stmt"</span>>loop_stmt</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"loop"</span> block<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"if_stmt"</span>>if_stmt</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"if"</span> expr block (<span class="string-literal">"else"</span> (if_stmt <span class="operator">|</span> block))<span class="operator">?</span><br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"expr_stmt"</span>>expr_stmt</span><span class=<span class="string-literal">"operator"</span>>:</span> expr stmt_end<br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"block"</span>>block</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">":"</span> _NEWLINE _INDENT (_NEWLINE <span class="operator">|</span> statement)<span class="operator">*</span> _DEDENT <span class="operator">|</span> LBRACE (_NEWLINE <span class="operator">|</span> statement)<span class="operator">*</span> RBRACE<br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"pattern"</span>>pattern</span><span class=<span class="string-literal">"operator"</span>>:</span> IDENT<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> IDENT <span class="string-literal">":"</span> type_expr<br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"type_expr"</span>>type_expr</span><span class=<span class="string-literal">"operator"</span>>:</span> path (<span class="string-literal">"<"</span> type_list <span class="string-literal">">"</span>)<span class="operator">?</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> <span class="string-literal">"fn"</span> LPAREN type_list<span class="operator">?</span> RPAREN (<span class="string-literal">"->"</span> type_expr)<span class="operator">?</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> <span class="string-literal">"["</span> type_expr <span class="string-literal">"]"</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> <span class="string-literal">"("</span> type_list <span class="string-literal">")"</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> <span class="string-literal">"dyn"</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> <span class="string-literal">"Self"</span><br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"expr"</span>>expr</span><span class=<span class="string-literal">"operator"</span>>:</span> logic_or ((<span class="string-literal">"="</span> <span class="operator">|</span> <span class="string-literal">"<span class="operator">+</span>="</span> <span class="operator">|</span> <span class="string-literal">"-="</span> <span class="operator">|</span> <span class="string-literal">"<span class="operator">*</span>="</span> <span class="operator">|</span> <span class="string-literal">"/="</span> <span class="operator">|</span> <span class="string-literal">"%="</span>) logic_or)<span class="operator">*</span><br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"<span class="operator">?</span>logic_or"</span>><span class="operator">?</span>logic_or</span><span class=<span class="string-literal">"operator"</span>>:</span> logic_and (<span class="string-literal">"<span class="operator">|</span><span class="operator">|</span>"</span> logic_and)<span class="operator">*</span><br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"<span class="operator">?</span>logic_and"</span>><span class="operator">?</span>logic_and</span><span class=<span class="string-literal">"operator"</span>>:</span> eq_expr (<span class="string-literal">"&&"</span> eq_expr)<span class="operator">*</span><br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"<span class="operator">?</span>eq_expr"</span>><span class="operator">?</span>eq_expr</span><span class=<span class="string-literal">"operator"</span>>:</span> comp_expr ((<span class="string-literal">"=="</span> <span class="operator">|</span> <span class="string-literal">"!="</span>) comp_expr)<span class="operator">*</span><br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"<span class="operator">?</span>comp_expr"</span>><span class="operator">?</span>comp_expr</span><span class=<span class="string-literal">"operator"</span>>:</span> bit_or ((<span class="string-literal">"<"</span><span class="operator">|</span><span class="string-literal">"<="</span><span class="operator">|</span><span class="string-literal">">"</span><span class="operator">|</span><span class="string-literal">">="</span>) bit_or)<span class="operator">*</span><br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"<span class="operator">?</span>bit_or"</span>><span class="operator">?</span>bit_or</span><span class=<span class="string-literal">"operator"</span>>:</span> bit_xor (<span class="string-literal">"<span class="operator">|</span>"</span> bit_xor)<span class="operator">*</span><br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"<span class="operator">?</span>bit_xor"</span>><span class="operator">?</span>bit_xor</span><span class=<span class="string-literal">"operator"</span>>:</span> bit_and (<span class="string-literal">"^"</span> bit_and)<span class="operator">*</span><br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"<span class="operator">?</span>bit_and"</span>><span class="operator">?</span>bit_and</span><span class=<span class="string-literal">"operator"</span>>:</span> shift_expr (<span class="string-literal">"&"</span> shift_expr)<span class="operator">*</span><br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"<span class="operator">?</span>shift_expr"</span>><span class="operator">?</span>shift_expr</span><span class=<span class="string-literal">"operator"</span>>:</span> add_expr ((<span class="string-literal">"<<"</span><span class="operator">|</span><span class="string-literal">">>"</span>) add_expr)<span class="operator">*</span><br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"<span class="operator">?</span>add_expr"</span>><span class="operator">?</span>add_expr</span><span class=<span class="string-literal">"operator"</span>>:</span> mul_expr ((<span class="string-literal">"<span class="operator">+</span>"</span><span class="operator">|</span><span class="string-literal">"-"</span>) mul_expr)<span class="operator">*</span><br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"<span class="operator">?</span>mul_expr"</span>><span class="operator">?</span>mul_expr</span><span class=<span class="string-literal">"operator"</span>>:</span> unary_expr ((<span class="string-literal">"<span class="operator">*</span>"</span><span class="operator">|</span><span class="string-literal">"/"</span><span class="operator">|</span><span class="string-literal">"%"</span>) unary_expr)<span class="operator">*</span><br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"<span class="operator">?</span>unary_expr"</span>><span class="operator">?</span>unary_expr</span><span class=<span class="string-literal">"operator"</span>>:</span> (<span class="string-literal">"-"</span><span class="operator">|</span><span class="string-literal">"!"</span><span class="operator">|</span><span class="string-literal">"~"</span>) unary_expr<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> <span class="string-literal">"await"</span> unary_expr<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> <span class="string-literal">"try"</span> unary_expr<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> primary<br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"<span class="operator">?</span>primary"</span>><span class="operator">?</span>primary</span><span class=<span class="string-literal">"operator"</span>>:</span> atom (postfix)<span class="operator">*</span><br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"<span class="operator">?</span>postfix"</span>><span class="operator">?</span>postfix</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"."</span> IDENT<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> LPAREN arg_list<span class="operator">?</span> RPAREN<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> LBRACKET expr RBRACKET<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> <span class="string-literal">"<span class="operator">?</span>"</span><br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"arg_list"</span>>arg_list</span><span class=<span class="string-literal">"operator"</span>>:</span> arg (<span class="string-literal">","</span> arg)<span class="operator">*</span> <span class="string-literal">","</span><span class="operator">?</span><br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"arg"</span>>arg</span><span class=<span class="string-literal">"operator"</span>>:</span> (IDENT <span class="string-literal">"="</span>)<span class="operator">?</span> expr<br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"<span class="operator">?</span>atom"</span>><span class="operator">?</span>atom</span><span class=<span class="string-literal">"operator"</span>>:</span> INT <span class="operator">|</span> FLOAT <span class="operator">|</span> STRING <span class="operator">|</span> FSTRING <span class="operator">|</span> RSTRING <span class="operator">|</span> <span class="string-literal">"true"</span> <span class="operator">|</span> <span class="string-literal">"false"</span> <span class="operator">|</span> <span class="string-literal">"self"</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> path<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> <span class="string-literal">"["</span> arg_list<span class="operator">?</span> <span class="string-literal">"]"</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> <span class="string-literal">"("</span> expr <span class="string-literal">")"</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> <span class="string-literal">"match"</span> expr <span class="string-literal">":"</span> match_body<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="operator">|</span> closure<br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"closure"</span>>closure</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"<span class="operator">|</span>"</span> ident_list<span class="operator">?</span> <span class="string-literal">"<span class="operator">|</span>"</span> expr<br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"match_body"</span>>match_body</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">":"</span> _NEWLINE _INDENT match_arm<span class="operator">*</span> _DEDENT <span class="operator">|</span> LBRACE match_arm<span class="operator">*</span> RBRACE<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"match_arm"</span>>match_arm</span><span class=<span class="string-literal">"operator"</span>>:</span> pattern <span class="string-literal">"=>"</span> expr <span class="string-literal">","</span><span class="operator">?</span> _NEWLINE<span class="operator">?</span><br>
+<br>
+<span class=<span class="string-literal">"rule-name"</span> id=<span class="string-literal">"path"</span>>path</span><span class=<span class="string-literal">"operator"</span>>:</span> IDENT (<span class="string-literal">"::"</span> IDENT)<span class="operator">*</span><br>
+<br>
+<span class=<span class="string-literal">"terminal"</span> id=<span class="string-literal">"IDENT"</span>>IDENT</span><span class=<span class="string-literal">"operator"</span>>:</span> /[a-zA-Z_][a-zA-Z0-9_]<span class="operator">*</span>/<br>
+<span class=<span class="string-literal">"terminal"</span> id=<span class="string-literal">"INT"</span>>INT</span><span class=<span class="string-literal">"operator"</span>>:</span> /[0-9]<span class="operator">+</span>/<br>
+<span class=<span class="string-literal">"terminal"</span> id=<span class="string-literal">"FLOAT"</span>>FLOAT</span><span class=<span class="string-literal">"operator"</span>>:</span> /[0-9]<span class="operator">+</span>\.[0-9]<span class="operator">+</span>/<br>
+<span class=<span class="string-literal">"terminal"</span> id=<span class="string-literal">"STRING"</span>>STRING</span><span class=<span class="string-literal">"operator"</span>>:</span> /<span class="string-literal">"[^"</span>]<span class="operator">*</span>"/ <span class="operator">|</span> /<span class="string-literal">'[^'</span>]<span class="operator">*</span>'/<br>
+<span class=<span class="string-literal">"terminal"</span> id=<span class="string-literal">"FSTRING.2"</span>>FSTRING.2</span><span class=<span class="string-literal">"operator"</span>>:</span> /f<span class="string-literal">"[^"</span>]<span class="operator">*</span>"/ <span class="operator">|</span> /f<span class="string-literal">'[^'</span>]<span class="operator">*</span>'/<br>
+<span class=<span class="string-literal">"terminal"</span> id=<span class="string-literal">"RSTRING.2"</span>>RSTRING.2</span><span class=<span class="string-literal">"operator"</span>>:</span> /r<span class="string-literal">"[^"</span>]<span class="operator">*</span>"/ <span class="operator">|</span> /r<span class="string-literal">'[^'</span>]<span class="operator">*</span>'/<br>
+<br>
+<span class=<span class="string-literal">"terminal"</span> id=<span class="string-literal">"LPAREN"</span>>LPAREN</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"("</span><br>
+<span class=<span class="string-literal">"terminal"</span> id=<span class="string-literal">"RPAREN"</span>>RPAREN</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">")"</span><br>
+<span class=<span class="string-literal">"terminal"</span> id=<span class="string-literal">"LBRACE"</span>>LBRACE</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"{"</span><br>
+<span class=<span class="string-literal">"terminal"</span> id=<span class="string-literal">"RBRACE"</span>>RBRACE</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"}"</span><br>
+<span class=<span class="string-literal">"terminal"</span> id=<span class="string-literal">"LBRACKET"</span>>LBRACKET</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"["</span><br>
+<span class=<span class="string-literal">"terminal"</span> id=<span class="string-literal">"RBRACKET"</span>>RBRACKET</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"]"</span><br>
+<br>
+%declare _INDENT _DEDENT<br>
+<span class=<span class="string-literal">"terminal"</span> id=<span class="string-literal">"_NEWLINE"</span>>_NEWLINE</span><span class=<span class="string-literal">"operator"</span>>:</span> ( /\r<span class="operator">?</span>\n[\t ]<span class="operator">*</span>/ <span class="operator">|</span> /#[^\n]<span class="operator">*</span>\n[\t ]<span class="operator">*</span>/ )<span class="operator">+</span><br>
+<span class=<span class="string-literal">"terminal"</span> id=<span class="string-literal">"COMMENT"</span>>COMMENT</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"//"</span> /[^\n]<span class="operator">*</span>/<br>
+<span class=<span class="string-literal">"terminal"</span> id=<span class="string-literal">"BLOCK_COMMENT"</span>>BLOCK_COMMENT</span><span class=<span class="string-literal">"operator"</span>>:</span> <span class="string-literal">"/<span class="operator">*</span>"</span> /(.<span class="operator">|</span>\n)<span class="operator">*</span><span class="operator">?</span>/ <span class="string-literal">"<span class="operator">*</span>/"</span><br>
+<br>
+%ignore COMMENT<br>
+%ignore BLOCK_COMMENT<br>
+%ignore /[\t \f]<span class="operator">+</span>/<br>
+%ignore /#[^\n]<span class="operator">*</span>/<br>
+<br>
+
+    </div>
+</body>
+</html>
