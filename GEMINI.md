@@ -1,12 +1,7 @@
 # Gemini CLI / Antigravity — Agam-Lang
 
-> Core compiler → `agam/CLAUDE.md`. This file = Gemini-specific setup.
+Core compiler: read `agam/CLAUDE.md`.
 
-## Multi-AI Workflow
+Use `AGENTS.md` for shared workspace rules. Load `.agent/skills/` manually only when a task needs one.
 
-You share this workspace with Claude and Codex. See `AGENTS.md` for organization repos, quick start, build & verify, and standard rules.
-
-## Skills
-
-@c:\Users\ksvik\Projects\Agam-Lang\.agent\skills\caveman\SKILL.md
-@c:\Users\ksvik\Projects\Agam-Lang\.agent\skills\caveman-compress\SKILL.md
+**CRITICAL RULE FOR ANTIGRAVITY (GEMINI)**: You MUST place ALL artifacts (implementation plans, task.md, walkthrough.md) locally in `c:\Users\ksvik\Projects\Agam-Lang\.agent\specs\active\details\`! DO NOT save them in your default `c:\Users\ksvik\.gemini\antigravity-ide\brain\...` directory! This is a hard requirement so that other AI agents can collaborate on the project!
