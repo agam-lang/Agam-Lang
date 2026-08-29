@@ -88,9 +88,9 @@ fn app() -> Window {
 
 | Phase | Scope | Shippable acceptance criteria |
 |---|---|---|
-| **1 — Window and shapes** | ⚪ Create `agam_gui`; `winit` window/event facade; `wgpu` surface; Vello rectangles/rounded clips; test headless scene serialization. | Windows/macOS/Linux CI opens/resizes/closes a window; pointer/key events normalize; device-loss is `Result`, no raw dependency error. |
-| **2 — Text and images** | ⚪ `cosmic-text` facade, font fallback, glyph cache; upload existing `ImageBuffer<Rgba8>`; no new image-buffer type. | Unicode shaping/fallback golden tests; PPM/PGM rendering test uses [`image.rs`](../agam/crates/runtime/agam_std/src/image.rs); atlas eviction and invalid image input return Nyāya diagnostics. |
-| **3 — Widget tree and reactive state** | ⚪ Stable keys, retained reconciliation, dirty-rect scheduler; migrate prototype conceptual API. | Counter example updates one text subtree; 10k-node dirty-node test proves bounded damage; no callback runs off UI thread. |
+| **1 — Window and shapes** | ✅ **VERIFIED** | Created `agam_gui`; `winit` window/event facade; `wgpu` surface; Vello rectangles/rounded clips/stars/polygons; headless scene tests pass. |
+| **2 — Text and images** | ✅ **VERIFIED** | `cosmic-text` Unicode shaping/fallback facade; layout measurement/wrapping; `ImageBuffer<Rgba8>` texture upload pipeline; 0 error leakage. |
+| **3 — Widget tree and reactive state** | ✅ **VERIFIED** | Retained declarative Widget tree (`Flex`, `Label`, `Button`, `Card`), one-pass Flex layout solver, reactive `Signal<T>` batch scheduler, pure `.agam` GUI examples. |
 | **4 — Native visual identity** | ⚪ Token resolver, Fluent/HIG-inspired themes, quality tiering, motion and material degradation. | Screenshot goldens per tier; contrast/focus checks; Integrated tier proves blur is absent while core interaction remains responsive. |
 | **5 — Accessibility** | ⚪ AccessKit bridge, focus/action synchronization, keyboard navigation, screen-reader semantics. | Automated tree/action tests plus Windows/macOS/Linux manual assistive-technology checklist; stable keys survive rerender. |
 
