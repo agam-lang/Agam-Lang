@@ -11,21 +11,22 @@ Whenever an AI agent encounters, diagnoses, or observes ANY defect, crash, lower
 
 1. **Do NOT silently bypass or ignore it.**
 2. **Open `issues.md` immediately.**
-3. **Score the issue using the Priority Rubric**:
-   - **S-Grade (100–120)**: Process crashes, `STATUS_STACK_OVERFLOW`, memory corruption, panics on user input.
-   - **A-Grade (70–99)**: Cross-backend execution/emission divergence (JIT $\ne$ LLVM), missing lowering pass.
-   - **B-Grade (40–69)**: Diagnostic quality, Pratt parser error recovery, layout lexer edge cases, doc drift.
-   - **C-Grade (10–39)**: Minor ergonomic or non-blocking cosmetic defects.
-4. **Append entry to the Master Index Table** with next available ID (`ISSUE-XXX`).
-5. **Update the Summary Table** counters (Total Logged, Open, Resolution Rate).
-6. **Add Detailed Section** containing:
-   - Priority Score & Grade
+3. **Classify the issue into its Priority Grade**:
+   - **S-Grade**: Critical crashes, `STATUS_STACK_OVERFLOW`, memory safety corruption, panics on user input.
+   - **A-Grade**: Backend divergence (Cranelift JIT $\ne$ LLVM AOT), missing lowering passes, unsupported primitive syntax.
+   - **B-Grade**: Diagnostic clarity, missing Pratt error recovery tokens, layout lexer edge cases, doc syntax drift.
+   - **C-Grade**: Minor ergonomic CLI formatting, warning noise, cosmetic doc typos.
+4. **Assign the next sequential Problem Number within that Priority** (e.g. `S-Grade: #1`, `S-Grade: #2`, `A-Grade: #1`, etc.).
+5. **Append entry to the Master Index Table** with `Index (Priority: Number)`, Component, Summary, and initial status `🔴 Still Exists`.
+6. **Update the Summary Table counters** (increment `Total Found` and `Still Exists`).
+7. **Add Detailed Section** containing:
+   - Priority Grade & Problem Number
    - Component / Crate path
    - Symptoms & exact error logs
    - Root Cause Analysis
    - Reproducible `.agam` snippet
    - Proposed fix strategy & target stage
-7. **When resolving an issue**:
-   - Change status to `🟢 FIXED`.
-   - Update Summary Table counters.
+8. **When resolving an issue**:
+   - Change status to `🟢 Yes (Fixed)`.
+   - Decrement "Still Exists", increment "Fixed" in Summary Table.
    - Record the commit hash or PR reference.
