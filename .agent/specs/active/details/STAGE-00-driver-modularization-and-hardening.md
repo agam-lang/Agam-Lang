@@ -76,14 +76,24 @@ flowchart TD
   4. Indentation nesting suppression inside braces `{ ... }` in lexer layout mode.
   5. Tuple destructuring variable binding in `agam_sema`.
 
+### 2.8 Documentation Truth & Doctest Alignment (`doctest-guard`)
+- Remediate syntax drift across ~15 markdown documents identified in `docs/` by `python scripts/doctest_check.py`:
+  - Replace pseudo-code `Int` with canonical `i32` or `i64`.
+  - Replace unsupported method calls like `.to_string()` with canonical conversions or format strings.
+  - Fix invalid enum match syntax and unlowered struct field definitions.
+  - Mandate that all code fences in `docs/` and `README.md` compile and run without error.
+
 ---
 
 ## 3. Verification & Acceptance Criteria
-- [ ] `agam_driver/src/main.rs` is reduced from 16.7K to $< 1,500$ lines.
+- [ ] `agam_driver/src/main.rs` is reduced from 16.7K to $< 1,500$ lines via `src/commands/` submodules.
+- [ ] Toolchain discovery extracted to `crates/tooling/agam_target`.
+- [ ] Headless worker pool extracted to `crates/tooling/agam_session`.
 - [ ] `cargo check --all-targets` passes with 0 warnings.
 - [ ] Missing `clang` pre-flight diagnostic tested and verified.
-- [ ] Parser reports multiple syntax errors in a single file pass without crashing.
+- [ ] Parser reports multiple syntax errors in a single file pass without crashing (`ast::Expr::Error` nodes).
 - [ ] Differential test runner verifies bitwise parity between JIT and AOT across test suites.
 - [ ] Remediate all 5 core parity gaps documented in `compiler_backend_parity_gaps.md`.
-- [ ] Global unwrap/expect count strictly decreases from 2,489.
+- [ ] Global unwrap/expect count strictly decreases from 1,399 baseline.
+- [ ] All code fences in `docs/` compile cleanly under `python scripts/doctest_check.py`.
 

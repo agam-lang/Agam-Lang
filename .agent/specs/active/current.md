@@ -17,6 +17,20 @@ Production-grade native systems compiler delivering bare-metal execution perform
 | **Stage 5** | **High-Performance SIMD Vector Engine (AVX2, AVX-512, NEON, RVV)** | 📋 **PLANNED** | [`details/STAGE-05-simd-vector-engine.md`](details/STAGE-05-simd-vector-engine.md) |
 | **Stage 6** | **Production Standard Library & Media Codecs (4K Image, FLAC, Async HTTP)** | 📋 **PLANNED** | [`details/STAGE-06-stdlib-media-codecs.md`](details/STAGE-06-stdlib-media-codecs.md) |
 | **Stage 7** | **Self-Hosting Bootstrap & 1:1 Benchmark Verification** | 📋 **PLANNED** | [`details/STAGE-07-self-hosting-bootstrap.md`](details/STAGE-07-self-hosting-bootstrap.md) |
+---
+
+### Active Priority Breakdown (Stage 0 In-Flight Work)
+1. **Monolithic Driver Deconstruction**:
+   - Extract `agam_driver/src/main.rs` (16,768-line god-file) into submodules under `src/commands/` (`build.rs`, `run.rs`, `daemon.rs`, `doctor.rs`, etc.).
+   - Extract toolchain discovery (`vswhere`, LLVM paths, Android NDK) into `crates/tooling/agam_target`.
+   - Extract compiler session and worker orchestration into `crates/tooling/agam_session`.
+2. **Panic-Free Unwrap Ratchet**:
+   - Strictly ratchet down the 1,399 `.unwrap()`/`.expect()` instances across compiler passes toward 0.
+3. **Resilient Pratt Parser Recovery**:
+   - Implement Pratt panic-mode synchronization tokens (`;`, `}`, `fn`, `let`, `return`) and `ast::Expr::Error` nodes.
+4. **Documentation Alignment (`doctest-guard`)**:
+   - Remediate syntax drift across ~15 markdown documents in `docs/` (`Int` $\rightarrow$ `i32`/`i64`, remove unsupported `.to_string()`, align with `note.md`).
+   - Ensure all code fences pass `python scripts/doctest_check.py` with zero drift.
 
 ---
 

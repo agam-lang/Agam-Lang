@@ -15,12 +15,13 @@ Use this document as the canonical answer to **"what should Agam compiler engine
      - Raw non-blocking TCP/UDP sockets with zero-copy ring buffers.
    - **Detail Spec**: [`details/STAGE-03-direct-syscalls-pal.md`](details/STAGE-03-direct-syscalls-pal.md)
 
-2. **Stage 0: Crate Decoupling & Inverted Driver Modularization (Parallel Track)** 🔄
-   - **Why**: Fixes Windows MSVC debug stack frame overflow by decomposing the 16.7K-line god-file `agam_driver/src/main.rs`.
+2. **Stage 0: Crate Decoupling, Driver Modularization & Quality Hardening (Active Track)** 🔄
+   - **Why**: Fixes Windows MSVC debug stack frame overflow by decomposing the 16.7K-line god-file `agam_driver/src/main.rs`, eliminates unwrap panics, and aligns documentation truth.
    - **Key Deliverables**:
-     - Extract `crates/tooling/agam_target` (MSVC / LLVM / Android NDK discovery).
-     - Extract `crates/tooling/agam_session` (headless compiler worker pool).
-     - Resilient Pratt parser panic-mode synchronization.
+     - **Driver Split**: Extract `crates/tooling/agam_target` (MSVC/LLVM/Android toolchains) and `crates/tooling/agam_session` (headless workers); split `main.rs` into `src/commands/`.
+     - **Panic Ratchet**: Ratchet down 1,399 unwrap/expect/panic instances across core passes.
+     - **Pratt Parser Recovery**: Token synchronization tokens (`;`, `}`, `fn`, `let`) and `ast::Expr::Error` nodes.
+     - **Doctest Alignment**: Remediate syntax drift across `docs/` so all snippets pass `python scripts/doctest_check.py`.
    - **Detail Spec**: [`details/STAGE-00-driver-modularization-and-hardening.md`](details/STAGE-00-driver-modularization-and-hardening.md)
 
 3. **Stage 4: C-ABI Foreign Binding Generator (`agam-bindgen`)** 📋
