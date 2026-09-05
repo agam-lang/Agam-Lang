@@ -1,0 +1,12 @@
+# Agent Ignore File — Prevents AI agents from scanning quarantined or heavy non-code paths
+archive/
+archive/**
+.archive/
+.archive/**
+.agam_cache/
+**/.agam_cache/
+target/
+**/target/
+node_modules/
+**/node_modules/
+*.pdb

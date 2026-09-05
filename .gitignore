@@ -1,0 +1,45 @@
+# Root .gitignore for Agam-Lang Workspace
+
+# Build targets & caches
+target/
+**/target/
+.agam_cache/
+**/.agam_cache/
+
+# Binary executables & libraries
+*.exe
+*.dll
+*.so
+*.dylib
+*.lib
+*.a
+*.pdb
+*.ilk
+*.obj
+*.o
+
+# Intermediate compiler artifacts
+*.ll
+*.bc
+*.s
+*.c.out
+
+# Temporary benchmark artifacts
+temp_*
+**/temp_*
+
+# OS metadata
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Node modules & editor scratch
+node_modules/
+.idea/
+*.swp
+*.bak
+*~
+
+# Quarantined & archived ghost repositories (anti-scan)
+/archive/
+archive/

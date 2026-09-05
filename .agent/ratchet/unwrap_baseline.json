@@ -1,0 +1,103 @@
+{
+  "total": 1399,
+  "crates": {
+    "tooling/agam_profile": {
+      "unwrap": 8,
+      "expect": 0,
+      "panic": 0,
+      "todo": 0,
+      "total": 8
+    },
+    "tooling/agam_pkg": {
+      "unwrap": 5,
+      "expect": 0,
+      "panic": 0,
+      "todo": 0,
+      "total": 5
+    },
+    "tooling/agam_lint": {
+      "unwrap": 1,
+      "expect": 0,
+      "panic": 0,
+      "todo": 0,
+      "total": 1
+    },
+    "tooling/agam_driver": {
+      "unwrap": 2,
+      "expect": 335,
+      "panic": 6,
+      "todo": 0,
+      "total": 343
+    },
+    "tooling/agam_debug": {
+      "unwrap": 1,
+      "expect": 0,
+      "panic": 0,
+      "todo": 0,
+      "total": 1
+    },
+    "runtime/agam_std": {
+      "unwrap": 19,
+      "expect": 7,
+      "panic": 0,
+      "todo": 0,
+      "total": 26
+    },
+    "runtime/agam_runtime": {
+      "unwrap": 45,
+      "expect": 3,
+      "panic": 0,
+      "todo": 0,
+      "total": 48
+    },
+    "middle/agam_sema": {
+      "unwrap": 0,
+      "expect": 2,
+      "panic": 0,
+      "todo": 0,
+      "total": 2
+    },
+    "middle/agam_mir": {
+      "unwrap": 2,
+      "expect": 1,
+      "panic": 0,
+      "todo": 0,
+      "total": 3
+    },
+    "experiments": {
+      "unwrap": 3,
+      "expect": 0,
+      "panic": 0,
+      "todo": 0,
+      "total": 3
+    },
+    "core/agam_parser": {
+      "unwrap": 7,
+      "expect": 86,
+      "panic": 0,
+      "todo": 0,
+      "total": 93
+    },
+    "core/agam_lexer": {
+      "unwrap": 2,
+      "expect": 0,
+      "panic": 0,
+      "todo": 0,
+      "total": 2
+    },
+    "backends/agam_jit": {
+      "unwrap": 0,
+      "expect": 3,
+      "panic": 1,
+      "todo": 0,
+      "total": 4
+    },
+    "backends/agam_codegen": {
+      "unwrap": 857,
+      "expect": 3,
+      "panic": 0,
+      "todo": 0,
+      "total": 860
+    }
+  }
+}
