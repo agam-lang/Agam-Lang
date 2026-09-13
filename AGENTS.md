@@ -20,3 +20,4 @@ Continuous session across Gemini, Claude, Codex. Rotate models freely.
 
 ## Architecture & Memory
 - Persistent memory: Consult `.agent/memory/handoff.md` and `.agent/notes/` before refactoring.
+- Remote Test Node: Intel i5 secondary validation target at `192.168.0.150` (see `.agent/notes/remote_test_node.md`).

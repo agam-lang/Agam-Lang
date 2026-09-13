@@ -128,6 +128,16 @@ After completing any phase:
 6. ✅ Update `catalog.md` and `current.md` status from `open` → `complete`
 7. ✅ Git commit + push via `python push_repos.py`
 
+### Remote Test Node (Secondary Intel Target)
+- **Node**: Dell Latitude 5410 (`DESKTOP-I5AFMNO`), Intel i5-10310U, 8GB RAM, 256GB SSD
+- **Role**: Remote matrix testing, Intel CPU validation, Agam-Lang parity proofs & benchmarks
+- **Network**: Local LAN `192.168.0.150` | User: `Main_Guest` | Pass: `56341236`
+- **Security**: One-way access only (HP -> Dell). Dell has zero access or open channels to HP.
+- **SSH Command**: `ssh Main_Guest@192.168.0.150 "powershell -Command <command>"`
+- **SCP**: `scp <local_file> Main_Guest@192.168.0.150:C:/Users/Main_Guest/<dest_folder>/`
+- **RDP GUI**: `mstsc /v:192.168.0.150`
+- **Full Spec**: See `.agent/notes/remote_test_node.md`
+
 ---
 
 ## 5. Skills System

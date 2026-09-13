@@ -143,3 +143,135 @@ While the compiler boasts advanced architectural features (SSA MIR optimization,
 │ Stage 7: Self-Hosting Bootstrap & Parity Benchmarks vs C++, Rust, Go, Python           │
 └────────────────────────────────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## 6. Micro-Architectural Acceleration: AVX-512 Predication & `-march=znver4`
+
+### 6.1 Architectural Principle: Eliminating Branch Misprediction via Mask Registers
+In branchy numerical and data-filtering inner loops:
+```agam
+for x in dataset {
+    if x > threshold {
+        sum = sum + x;
+    }
+}
+```
+Traditional scalar compilation relies on speculative hardware branch predictors (`jle`/`jg`). When data is random or conditions are unpredictable (e.g. 50% branch rate), CPUs suffer severe branch misprediction stalls (15–20 clock cycles per stall).
+
+Targeting modern microarchitectures—specifically **AMD Zen 4 / Zen 5 (`znver4` / `znver5`)** and **Intel AVX-512**—allows compilers to replace conditional branch control flow with **vector mask registers (`k0`–`k7`)**:
+* **Vector Comparisons (`vcmpps`)**: Evaluate condition masks across 8 (`<8 x float>`) or 16 (`<16 x float>`) lanes simultaneously into a 64-bit opmask register.
+* **Predicated Execution**: Arithmetic instructions execute conditionally per lane via `{k1}` masking without branching.
+* **Zen 4 Zero-Throttling Advantage**: Unlike early Intel architectures (Skylake-X) that incurred thermal downclocking (frequency drop) when executing 512-bit instructions, AMD Zen 4 implements double-pumped 256-bit ALUs without any frequency penalty.
+* **Loop Tail Predication**: Slices with lengths not divisible by vector width are handled via masked loads/stores instead of scalar epilogue loops.
+
+### 6.2 Current Agam Compiler State
+1. **LLVM AOT Backend**: Indirectly available when compiling with `--fast` on a Zen 4/5 host because `build.rs` passes `-march=native -mtune=native` to `clang`. LLVM's loop vectorizer auto-detects host vector masks.
+2. **Missing CLI Capabilities**: `agamc` lacks `--target-cpu <cpu>` and `-march` flags, preventing cross-compilation or targeted deployment to `znver4`.
+3. **Constrained Codegen Defaults**: `LlvmOptConfig` in `agam_codegen::llvm_opt` defaults to `preferred_vector_width = 256` and `+avx2`, omitting AVX-512 feature flags (`+avx512f`, `+avx512vl`, `+avx512bw`, `+avx512dq`).
+4. **Cranelift JIT**: Cranelift JIT does not support AVX-512 mask predication; fallback paths are necessary to preserve the **Dual-Backend Parity Invariant**.
+
+### 6.3 Implementation Plan
+* **Stage 0 / Tooling**:
+  * Add `--target-cpu` (e.g., `agamc build --target-cpu znver4`) and `--target-features` to the CLI driver.
+  * Update `LlvmOptConfig` to set `preferred_vector_width = 512` when targeting `znver4`, `znver5`, or AVX-512 targets, and inject `-mllvm -prefer-predicate-over-epilogue=predicate-else-scalar-epilogue`.
+* **Stage 5 (SIMD Engine)**:
+  * Expose first-class vector mask types and conditional operations in HIR/MIR (`Op::VecMaskCompare`, `Op::VecMaskedLoad`, `Op::VecMaskedStore`).
+  * Lower to LLVM intrinsics (`llvm.masked.load`, `llvm.masked.store`, vector `select`) with automatic scalar/AVX2 fallbacks for Cranelift JIT parity.
+
+---
+
+## 7. Advanced Micro-Architectural Compiler Co-Design & Hardware Test Matrix
+
+### 7.1 High-Impact Silicon Techniques for Future Compiler Stages
+
+| Technique & Instructions | Microarchitecture Target | Hardware Bottleneck Bypassed | Compiler Emission Strategy & Agam Application |
+|---|---|---|---|
+| **APX Branchless Compare**<br>`CCMP`, `CTEST`, `{nf}` | Intel Arrow Lake / Granite Rapids | Multi-branch cascading & false flag WAW register dependencies | Perform wide-scope if-conversion on `if (a && b && c)`; suppress `EFLAGS` updates via `{nf}` prefix. Speeds up pattern match guards in `agam_sema`. |
+| **First-Faulting Loads**<br>`LDFF1B`, `FFR` register | ARMv9 (Neoverse V2, Apple M-series) | Memory page-fault `SIGSEGV` when speculatively loading variable-length strings | Suppress faults when speculative vector reads cross page boundaries; read `FFR` mask for valid bytes. Enables zero-overhead vectorized string & JSON scanning in `std.re`. |
+| **Conflict Detection**<br>`VPCONFLICTD/Q` | AVX-512CD / AMD Zen 4 | Loop-carried dependencies & write-after-write hazards in histogram updates (`hist[arr[i]]++`) | Vectorize histogram accumulation loops: detect conflicts in 1 cycle, update conflict-free lanes via masked scatter-add, resolve remainder. Powers Stage 6 columnar analytics. |
+| **Non-Temporal Stores**<br>`movntdq`, `vmovntps`, `DC ZVA` | All modern x86-64 & ARMv8+ | Write-allocate penalty: CPU reads 64B cache line from RAM before writing, wasting 50% memory bandwidth | Emit streaming stores for allocations $> \text{L3 cache size}$, writing directly to Write-Combining buffers to double memory write throughput in Stage 1 & Stage 6. |
+| **Subnormal Hardware Trap Flush**<br>`MXCSR: FTZ + DAZ` | All x86-64 SSE/AVX | 150-cycle microcode assist exception on subnormal floating-point numbers ($< 10^{-38}$) | Initialize `FTZ` (Flush-To-Zero) and `DAZ` (Denormals-Are-Zero) at thread startup in `@lang.advance` systems mode. Prevents 100x slowdowns in audio DSP & physics. |
+| **Hardware Spinlock Backoff**<br>`PAUSE`, `UMWAIT`, `TPAUSE` | Modern x86-64 (Zen 4, Alder Lake+) | Memory bus contention & speculative pipeline flushes on lock-free spin-loops | Emit scaled `PAUSE` instructions (~65–140 cycles) and user-mode `UMWAIT` in Stage 3 async PAL ring buffers and worker thread wait loops. |
+
+---
+
+### 7.2 Empirically Verified Hardware Test Matrix & Lab Setup
+
+The developer environment provides a multi-tier testing and benchmarking laboratory:
+
+```
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                                HARDWARE TESTING MATRIX                                 │
+├──────────────────────────┬─────────────────────────────┬───────────────────────────────┤
+│ Laptop 1 (Local Host)    │ Laptop 2 (Control Baseline) │ GitHub CI/CD (Matrix Fleet)   │
+├──────────────────────────┼─────────────────────────────┼───────────────────────────────┤
+│ AMD Ryzen 7 7840HS       │ Intel Core i5-10310U        │ Azure VMs + ARM Runners       │
+│ Zen 4 (znver4), 8C/16T   │ Comet Lake (14nm), 4C/8T    │ ubuntu-latest, macos-14 (M3)  │
+│ Full AVX-512, k0-k7, CD  │ Baseline AVX2 / FMA3 only   │ ubuntu-24.04-arm64 (NEON)     │
+│ Zero-throttle double-ALU │ Strict No-AVX-512 control   │ Intel SDE (APX) & QEMU (SVE)  │
+└──────────────────────────┴─────────────────────────────┴───────────────────────────────┘
+```
+
+#### 1. Laptop 1: AMD Ryzen 7 7840HS (AMD Zen 4 — `znver4`)
+* **Verified Silicon State**: Live host probing verified support for `AVX512F`, `AVX512VL`, `AVX512BW`, `AVX512DQ`, `AVX512CD`, `AVX512VNNI`, `AVX512BF16`, and 32 512-bit registers (`%zmm0`–`%zmm31`).
+* **Verified Codegen**: Live compilation via WSL Clang (`-march=znver4`) confirmed hardware opmask predication:
+  ```assembly
+  vcmpltps    %zmm6, %zmm1, %k1           ; 16-lane condition mask into %k1
+  vaddps      %zmm6, %zmm2, %zmm2{%k1}    ; Branchless predicated add (0 mispredicts)
+  ```
+* **Assigned Test Scope**: AVX-512 predication benchmarks, `VPCONFLICT` histogram vectorization, non-temporal streaming writes, and Zen 4 macro-fusion verification.
+
+#### 2. Laptop 2: Intel Core i5-10310U (Intel Comet Lake)
+* **Silicon Role**: Control machine representing the standard enterprise AVX2 baseline without AVX-512 or mask registers.
+* **Assigned Test Scope**: A/B baseline speedup benchmarks ($T_{\text{baseline}} / T_{\text{znver4}}$), subnormal trap demonstration (measuring the 100x penalty without FTZ), and `PAUSE` latency differences.
+
+#### 3. GitHub CI/CD Automated Test Fleet
+* **Multi-OS Parity**: Automated matrix builds across Linux, Windows, and macOS.
+* **Apple Silicon & ARM64**: Native execution on `macos-14` (M-series) and `ubuntu-24.04-arm64` for ARM NEON validation.
+* **Emulated Verification**:
+  * **Intel APX**: Run `intel-sde -apx -- ./test_binary` on Linux runners to verify `CCMP`/`CTEST` code generation ahead of consumer hardware availability.
+  * **ARM SVE/SVE2**: Run `qemu-aarch64 -cpu max` to verify `LDFF1` first-faulting vector string scanners.
+
+---
+
+## 8. Strategic AI & NPU Architecture: Bypassing ONNX vs. Pragmatic Acceleration
+
+### 8.1 The "Bypassing ONNX" Dilemma (MLIR-AIE & IREE)
+* **Value & Impact**: Academic / High Systems Engineering Prestige.
+* **The Reality**: Stepping off the supported AMD Ryzen AI SDK path into experimental compiler territory requires writing custom MLIR dialects, manually routing spatial AIE-ML tile DMAs and switch matrices, and compiling directly to FPGA-derived `.xclbin` bitstreams. Driver/firmware updates can break the toolchain overnight.
+* **Time to Build**: 6 to 10+ weeks.
+* **Daily Utility Score**: **4.0 / 10** (High resume value for compiler engineering roles, but very low ROI for shipping an everyday desktop systems language).
+
+### 8.2 The Silicon Reality on the Ryzen 7 7840HS: The "NPU Paradox"
+On modern mobile APUs, the dedicated NPU is architected for low-power (5W) continuous background tasks (e.g. Windows Studio Effects), making it the weakest accelerator on the system while having the most brittle compiler toolchain:
+
+| Silicon Component | Compute Throughput | Native Target Model | Toolchain Stability | Engineering Effort |
+|---|---|---|---|:---:|
+| **NVIDIA RTX 3050 Laptop GPU** | **~36–40 TFLOPS (FP16)**<br>**~70+ TOPS (INT8)** | Native CUDA / NVPTX (already in `agam_codegen`) | 🟢 Rock solid (Decades of mature drivers) | Moderate |
+| **AMD Zen 4 CPU (8C/16T, AVX-512)** | **~20–25 TOPS (INT8 VNNI)**<br>**~1.5 TFLOPS (FP32)** | Native AVX-512 / LLVM (`-march=znver4`) | 🟢 Zero external drivers (Bare-metal) | Low |
+| **AMD Radeon 780M (RDNA3 iGPU)** | **~17 TFLOPS (FP16)** | DirectML, Vulkan Kompute, ROCm | 🟡 Stable (Standard graphics driver) | Moderate |
+| **AMD XDNA 1 NPU (Phoenix AIE-ML)** | **10 TOPS (INT8 only)** | Spatial AIE Tiles $\rightarrow$ XRT $\rightarrow$ `.xclbin` | 🔴 High fragility (Firmware/driver ABI drift) | Extreme (6–10+ weeks) |
+
+### 8.3 Agam 3-Tier AI/Tensor Implementation Strategy
+
+```
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                              AGAM TENSOR & AI ROADMAP                                  │
+├────────────────────────────────────────────────────────────────────────────────────────┤
+│ Tier 1 (10/10 Utility): Stage 4 C-ABI FFI -> ONNX Runtime / DirectML C-API    [1 Week] │
+│ Tier 2 (9/10 Utility):  Stage 5 Native AVX-512 VNNI + NVIDIA CUDA PTX        [Planned] │
+│ Tier 3 (4/10 Academic): Experimental MLIR-AIE Dialect Sandbox             [Non-Block] │
+└────────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+1. **Tier 1: Pragmatic Production FFI (10/10 Daily Utility — 1 Week)**:
+   * Implement C-ABI bindings in Stage 4 (`agam-bindgen`) to the **ONNX Runtime C API** and **DirectML C API**.
+   * Automatically inherits AMD's official `VitisAI` Execution Provider (leveraging the 7840HS NPU safely), DirectML (targeting the 780M iGPU), and TensorRT (targeting the RTX 3050) with zero custom tile routing or driver fragility.
+2. **Tier 2: Native Bare-Metal Compute (9/10 Daily Utility — Stage 5)**:
+   * Lower `TensorOp::MatMul` in `agam_mir::dialect` directly to AVX-512 VNNI (`vpdpbusd`) for CPU inference and CUDA PTX for RTX 3050 dGPU inference. Delivers $2\times$ to $7\times$ higher real-world compute throughput than the NPU with zero external dependencies.
+3. **Tier 3: Academic MLIR-AIE Sandbox (4/10 Daily Utility — Experimental)**:
+   * Keep `agam_mir::dialect` extensible, but isolate any spatial AIE tile routing experiments in a separate tooling crate (`agam_aie`), strictly preventing experimental FPGA/NPU toolchains from blocking the compiler core.
+
+
+

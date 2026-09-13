@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-29  
 **Reviewer:** Antigravity (Claude Opus 4.6)  
-**RFC Under Review:** [`doc/RFC-gui-engine.md`](file:///c:/Users/ksvik/Projects/Agam-Lang/doc/RFC-gui-engine.md)  
+**RFC Under Review:** [`docs/RFC-gui-engine.md`](RFC-gui-engine.md)  
 **Status:** ⛔ **Phase 1 Blocked** — dependency version triple unresolvable as specified
 
 ---
@@ -13,7 +13,7 @@ Every file path and type citation in the RFC was independently verified against 
 
 ### 1.1 File Path Checks
 
-| # | RFC Citation (relative to `doc/`) | Resolved Absolute Path | Status | Check Method |
+| # | RFC Citation (relative to `docs/`) | Resolved Absolute Path | Status | Check Method |
 |---|---|---|:---:|---|
 | 1 | `../agam/crates/experiments/agam_ui/src/lib.rs` | `agam/crates/experiments/agam_ui/src/lib.rs` | ✅ PASS | `Test-Path` |
 | 2 | `../agam/crates/experiments/agam_ui/src/reactive.rs` | `agam/crates/experiments/agam_ui/src/reactive.rs` | ✅ PASS | `Test-Path` |
@@ -27,10 +27,10 @@ Every file path and type citation in the RFC was independently verified against 
 | 10 | `../agam/crates/core/agam_errors/src/diagnostic.rs` | `agam/crates/core/agam_errors/src/diagnostic.rs` | ✅ PASS | `view_file` — `Diagnostic` L146, `NyayaProof` L107 |
 | 11 | `../agam/crates/experiments/agam_ffi/src/c_abi.rs` | `agam/crates/experiments/agam_ffi/src/c_abi.rs` | ✅ PASS | `Test-Path` |
 | 12 | `../agam/crates/experiments/agam_ffi/src/bindgen.rs` | `agam/crates/experiments/agam_ffi/src/bindgen.rs` | ✅ PASS | `Test-Path` |
-| 13 | `ADOPTED_DEPENDENCIES.md` | `doc/ADOPTED_DEPENDENCIES.md` | ✅ PASS | `view_file` — 67 lines |
-| 14 | `FUTURE_ARCHITECTURE.md` | `doc/FUTURE_ARCHITECTURE.md` | ✅ PASS | `view_file` |
-| 15 | `MEMORY_MODEL.md` | `doc/MEMORY_MODEL.md` | ✅ PASS | `view_file` |
-| 16 | `architecture/gui-architecture.md` | `doc/architecture/gui-architecture.md` | ✅ PASS | `Test-Path` |
+| 13 | `ADOPTED_DEPENDENCIES.md` | `docs/ADOPTED_DEPENDENCIES.md` | ✅ PASS | `view_file` — 67 lines |
+| 14 | `FUTURE_ARCHITECTURE.md` | `docs/FUTURE_ARCHITECTURE.md` | ✅ PASS | `view_file` |
+| 15 | `MEMORY_MODEL.md` | `docs/MEMORY_MODEL.md` | ✅ PASS | `view_file` |
+| 16 | `architecture/gui-architecture.md` | `docs/architecture/gui-architecture.md` | ✅ PASS | `Test-Path` |
 
 ### 1.2 `agam_ui/Cargo.toml` — No `winit`/`wgpu` Dependency
 

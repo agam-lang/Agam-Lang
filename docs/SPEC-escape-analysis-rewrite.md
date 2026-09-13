@@ -202,7 +202,7 @@ enum CaptureKind { NoCapture, MayCapture, Escapes }
 
 ## 7. Phased implementation breakdown
 
-🟢 The project’s milestone convention is one roughly week-long daily-cadence phase with shippable acceptance criteria (`doc/RFC-gui-engine.md:87-101`). The following phases use Gemini for daily implementation slices and Claude for the end-of-week evidence review; neither reviewer accepts status prose in place of MIR diffs and test output.
+🟢 The project’s milestone convention is one roughly week-long daily-cadence phase with shippable acceptance criteria (`docs/RFC-gui-engine.md:87-101`). The following phases use Gemini for daily implementation slices and Claude for the end-of-week evidence review; neither reviewer accepts status prose in place of MIR diffs and test output.
 
 | Phase | Daily-cadence Gemini scope | Weekly Claude review checkpoint / shippable acceptance criteria |
 |---|---|---|

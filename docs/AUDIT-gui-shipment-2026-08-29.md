@@ -92,7 +92,7 @@ Two grammar features were added in commit `445ffa7` without appearing in the app
 
 ### 3.2 Formal Grammar Divergence — ⛔ CONFIRMED
 
-| Grammar Feature | Parser (`parser.rs`) | EBNF (`doc/grammar.ebnf`) | Diverged? |
+| Grammar Feature | Parser (`parser.rs`) | EBNF (`docs/grammar.ebnf`) | Diverged? |
 |---|---|---|:---:|
 | `\|\|` zero-param closure | `TokenKind::PipePipe` → `ExprKind::Lambda { params: [] }` | `ClosureExpr = "\|" , [ ParameterList ] , "\|" ...` — no `"\|\|"` alternative | ⛔ **Yes** |
 | Multi-line struct literals | `looks_like_struct_literal()` skips `Newline`/comments inside `{}` | `StructInit = Identifier , "{" , [ FieldInit , ... ] , "}"` — no newline handling | ⛔ **Yes** |
@@ -190,7 +190,7 @@ The 25 passing tests are real but shallow given the scope:
 ### Critical (Block next phase)
 
 - [ ] **F1:** Replace `draw_vector_char` in `apps.rs` with `cosmic-text` rendering via `text.rs`'s `FontContext`. This is the only fix that resolves the glyph corruption and honors the RFC's ADOPT decision.
-- [ ] **F2:** Update `doc/grammar.ebnf` with: (a) `"||"` zero-param closure alternative in `ClosureExpr`, (b) newline tolerance in `StructInit`, (c) `StringLiteral` as `FieldInit` name.
+- [ ] **F2:** Update `docs/grammar.ebnf` with: (a) `"||"` zero-param closure alternative in `ClosureExpr`, (b) newline tolerance in `StructInit`, (c) `StringLiteral` as `FieldInit` name.
 - [ ] **F3:** Add dual-syntax parity test for `||`-closures and multi-line struct literals in `compiler_fuzz.rs`.
 - [ ] **F4:** Add `winit = 0.30.13` row to `ADOPTED_DEPENDENCIES.md`.
 - [ ] **F5:** Remove `#[allow(dead_code)]` on `SwashCache` and wire glyph rasterization into the rendering pipeline, or remove it if unused.

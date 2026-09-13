@@ -10,4 +10,6 @@
 - **Fast Build**: Use `python scripts/cargo_lens.py check` to save tokens.
 - **Rules**: Inherited from `AGENTS.md` and `.agent/rules/` (`bug-ledger.md`).
 - **Active Phase**: Read `.agent/specs/active/current.md`.
+- **Secondary Test Node**: Dell Latitude 5410 Intel target at `192.168.0.150` (`.agent/notes/remote_test_node.md`).
+
 
