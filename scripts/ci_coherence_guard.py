@@ -107,19 +107,24 @@ def count_panics():
     return total_unwraps, total_expects, total_panics
 
 def verify_required_docs():
-    required = [
-        AGAM_ROOT / "docs" / "MEMORY_MODEL.md",
-        AGAM_ROOT / "docs" / "grammar.ebnf",
-        AGAM_ROOT / "docs" / "ADOPTED_DEPENDENCIES.md",
-        AGAM_ROOT / "docs" / "FUTURE_ARCHITECTURE.md",
+    required_names = [
+        "MEMORY_MODEL.md",
+        "grammar.ebnf",
+        "ADOPTED_DEPENDENCIES.md",
+        "FUTURE_ARCHITECTURE.md",
     ]
     print("\n--- Verifying Required Specification Artifacts ---")
     all_ok = True
-    for doc in required:
+    for name in required_names:
+        doc = WORKSPACE_ROOT / "docs" / name
+        if not doc.exists():
+            doc = AGAM_ROOT / "docs" / name
+        if not doc.exists():
+            doc = WORKSPACE_ROOT / "doc" / name
         if doc.exists() and doc.stat().st_size > 0:
-            print(f"[FOUND]: {doc.relative_to(AGAM_ROOT)} ({doc.stat().st_size} bytes)")
+            print(f"[FOUND]: {name} ({doc.stat().st_size} bytes)")
         else:
-            print(f"[MISSING/EMPTY]: {doc.relative_to(AGAM_ROOT)}")
+            print(f"[MISSING/EMPTY]: {name}")
             all_ok = False
     
     if not all_ok:

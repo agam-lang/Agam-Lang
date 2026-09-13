@@ -6,14 +6,13 @@ Use this document as the canonical answer to **"what should Agam compiler engine
 
 ## 🎯 Immediate Priority Queue
 
-1. **Stage 3: Direct System Call & OS Subsystem Engine** 🚀
-   - **Why**: Essential for bare-metal OS interaction without intermediate C stdlib wrappers.
+1. **Stage 4: C-ABI Foreign Binding Generator (`agam-bindgen`)** 🚀
+   - **Why**: Enables zero-overhead linkage to native system libraries (`libc`, `libm`, `libz`, `libpng`, `libflac`).
    - **Key Deliverables**:
-     - MIR `Op::Syscall` & LLVM inline assembly lowering (`syscall` on x86_64, `svc #0` on aarch64, Windows NT fastcalls).
-     - Direct memory management in `agam_runtime::pal::memory` (`mmap`/`munmap` on POSIX, `VirtualAlloc`/`VirtualFree` on Windows).
-     - High-throughput async I/O multiplexing in `agam_runtime::pal::event` (`epoll_create1` / `kqueue` / Windows `IOCP`).
-     - Raw non-blocking TCP/UDP sockets with zero-copy ring buffers.
-   - **Detail Spec**: [`details/STAGE-03-direct-syscalls-pal.md`](details/STAGE-03-direct-syscalls-pal.md)
+     - Automated C header parser & Agam extern generator.
+     - Zero-cost C-ABI struct/union memory layout mapping.
+     - Integration with `agam_ffi` runtime loader.
+   - **Detail Spec**: [`details/STAGE-04-foreign-bindgen.md`](details/STAGE-04-foreign-bindgen.md)
 
 2. **Stage 0: Crate Decoupling, Driver Modularization & Quality Hardening (Active Track)** 🔄
    - **Why**: Fixes Windows MSVC debug stack frame overflow by decomposing the 16.7K-line god-file `agam_driver/src/main.rs`, eliminates unwrap panics, and aligns documentation truth.
@@ -24,11 +23,7 @@ Use this document as the canonical answer to **"what should Agam compiler engine
      - **Doctest Alignment**: Remediate syntax drift across `docs/` so all snippets pass `python scripts/doctest_check.py`.
    - **Detail Spec**: [`details/STAGE-00-driver-modularization-and-hardening.md`](details/STAGE-00-driver-modularization-and-hardening.md)
 
-3. **Stage 4: C-ABI Foreign Binding Generator (`agam-bindgen`)** 📋
-   - **Why**: Enables zero-overhead linkage to native system libraries (`libc`, `libm`, `libz`, `libpng`, `libflac`).
-   - **Detail Spec**: [`details/STAGE-04-foreign-bindgen.md`](details/STAGE-04-foreign-bindgen.md)
-
-4. **Stage 5: High-Performance SIMD Vector Engine** 📋
+3. **Stage 5: High-Performance SIMD Vector Engine** 📋
    - **Why**: First-class vector types (`vec8f32`, `vec16u8`) with AVX2/AVX-512/NEON/RVV hardware acceleration.
    - **Detail Spec**: [`details/STAGE-05-simd-vector-engine.md`](details/STAGE-05-simd-vector-engine.md)
 
