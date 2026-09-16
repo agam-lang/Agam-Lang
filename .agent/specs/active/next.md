@@ -6,6 +6,15 @@ Use this document as the canonical answer to **"what should Agam compiler engine
 
 ## 🎯 Immediate Priority Queue
 
+0. **Syntax & Tooling Redesign Track (`PRE-000` & Specs 001–010)** 📐
+   - **Why**: Fixes core compiler/syntax contradictions: multi-line base-mode structs fail, no call arity checking exists in sema, license comments cause silent base-mode default, and dialects are unenforced.
+   - **Authority & Index**: [`.agent/specs/syntax/000-INDEX.md`](../syntax/000-INDEX.md)
+   - **Hard Precondition**: `PRE-000` (byte-for-byte stdout dual-backend differential execution harness in `agam_test/src/differential.rs`).
+   - **Top 3 Immediate Specs**:
+     - `001`: Base-Mode Type Declarations (fixes B-Grade #1 / ASYM-1)
+     - `002`: Call Arity and Argument Checking (fixes missing sema arity check)
+     - `003`: Manifest Syntax Profile & Strict Directive Placement (fixes S-Grade #3)
+
 1. **Stage 4: C-ABI Foreign Binding Generator (`agam-bindgen`)** 🚀
    - **Why**: Enables zero-overhead linkage to native system libraries (`libc`, `libm`, `libz`, `libpng`, `libflac`).
    - **Key Deliverables**:

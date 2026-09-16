@@ -14,11 +14,11 @@
 
 | Priority Grade | Severity & Nature | Total Found | 🟢 Fixed | 🔴 Still Exists (Open) | 🟡 In Progress | Resolution Rate |
 |:---:|---|:---:|:---:|:---:|:---:|:---:|
-| **S-Grade** | Critical: Crashes, Stack Overflows, Memory Safety, Panics | 2 | 0 | 1 | 1 | 0.0% |
-| **A-Grade** | Major: Dual-Backend Parity Divergence, Missing Lowering Gaps | 3 | 0 | 3 | 0 | 0.0% |
-| **B-Grade** | Minor: Diagnostics, Parser Recovery, Layout Lexer, Doc Drift | 3 | 0 | 1 | 2 | 0.0% |
-| **C-Grade** | Trivial: Ergonomics, Non-blocking Cosmetic Warnings | 0 | 0 | 0 | 0 | - |
-| **TOTAL** | **All Compiler Problems Tracked** | **8** | **0** | **5** | **3** | **0.0%** |
+| **S-Grade** | Critical: Crashes, Stack Overflows, Memory Safety, Panics | 3 | 0 | 2 | 1 | 0.0% |
+| **A-Grade** | Major: Dual-Backend Parity Divergence, Missing Lowering Gaps | 6 | 0 | 6 | 0 | 0.0% |
+| **B-Grade** | Minor: Diagnostics, Parser Recovery, Layout Lexer, Doc Drift | 6 | 0 | 4 | 2 | 0.0% |
+| **C-Grade** | Trivial: Ergonomics, Non-blocking Cosmetic Warnings | 1 | 0 | 1 | 0 | 0.0% |
+| **TOTAL** | **All Compiler Problems Tracked** | **16** | **0** | **13** | **3** | **0.0%** |
 
 ---
 
@@ -42,9 +42,17 @@
 | [`A-Grade: #1`](#a-grade-1-range-method-dispatch-reduce-not-desugared-in-hir) | `agam_hir` / `agam_sema` | Range method chains (`(0..10).reduce(...)`) fail in JIT and emit undeclared locals in LLVM | 🔴 **Still Exists** | [Stage 0](file:///c:/Users/ksvik/Projects/Agam-Lang/.agent/specs/active/details/STAGE-00-driver-modularization-and-hardening.md) |
 | [`A-Grade: #2`](#a-grade-2-missing-cranelift-jit-indexed-aggregate-store-slice) | `agam_jit` | Indexed aggregate stores (`arr[i] = val`) supported in LLVM but missing in Cranelift JIT | 🔴 **Still Exists** | [Stage 0 / 1](file:///c:/Users/ksvik/Projects/Agam-Lang/.agent/specs/active/details/STAGE-00-driver-modularization-and-hardening.md) |
 | [`A-Grade: #3`](#a-grade-3-tuple-destructuring-variable-binding-unlowered-in-sema) | `agam_sema` | Tuple destructuring bindings (`let (a, b) = pair;`) unhandled during semantic resolution | 🔴 **Still Exists** | [Stage 0 / 2](file:///c:/Users/ksvik/Projects/Agam-Lang/.agent/specs/active/details/STAGE-00-driver-modularization-and-hardening.md) |
-| [`B-Grade: #1`](#b-grade-1-spurious-indentation-inside-braces-in-base-profile) | `agam_lexer` | Layout mode inserts spurious `Indent`/`Dedent` inside curly braces `{ ... }` in base profile | 🔴 **Still Exists** | [Stage 0](file:///c:/Users/ksvik/Projects/Agam-Lang/.agent/specs/active/details/STAGE-00-driver-modularization-and-hardening.md) |
+| [`B-Grade: #1`](#b-grade-1-spurious-indentation-inside-braces-in-base-profile) | `agam_lexer` | Layout mode inserts spurious `Indent`/`Dedent` inside curly braces `{ ... }` in base profile | 🔴 **Still Exists** | [Spec 001](file:///c:/Users/ksvik/Projects/Agam-Lang/.agent/specs/syntax/001-base-mode-type-declarations.md) |
 | [`B-Grade: #2`](#b-grade-2-parser-lacks-pratt-panic-mode-error-synchronization) | `agam_parser` | Parser terminates on first syntax error without recovery tokens or `Expr::Error` nodes | 🟡 **In Progress** | [Stage 0](file:///c:/Users/ksvik/Projects/Agam-Lang/.agent/specs/active/details/STAGE-00-driver-modularization-and-hardening.md) |
 | [`B-Grade: #3`](#b-grade-3-documentation-code-snippet-syntax-drift-across-docs) | `docs/` | ~15 docs have outdated syntax (`Int` vs `i32`, `.to_string()`), failing `doctest_check.py` | 🟡 **In Progress** | [Stage 0](file:///c:/Users/ksvik/Projects/Agam-Lang/.agent/specs/active/details/STAGE-00-driver-modularization-and-hardening.md) |
+| [`S-Grade: #3`](#s-grade-3-silent-wrong-mode-lexing-with-leading-file-comments) | `agam_lexer` | `detect_mode` skips whitespace only; leading comments cause silent fallback to base mode | 🔴 **Still Exists** | [Spec 003](file:///c:/Users/ksvik/Projects/Agam-Lang/.agent/specs/syntax/003-manifest-syntax-profile.md) |
+| [`A-Grade: #4`](#a-grade-4-no-call-arity-and-argument-type-checking-in-sema) | `agam_sema` | Function call expressions (`ExprKind::Call`) do not check argument count or parameter types | 🔴 **Still Exists** | [Spec 002](file:///c:/Users/ksvik/Projects/Agam-Lang/.agent/specs/syntax/002-call-arity-checking.md) |
+| [`A-Grade: #5`](#a-grade-5-silent-no-op-syscall-in-cranelift-jit) | `agam_jit` | `Op::Syscall` emits `default_value(0)` in JIT while emitting real inline assembly in LLVM AOT | 🔴 **Still Exists** | [Parity Invariant](file:///c:/Users/ksvik/Projects/Agam-Lang/.agent/rules/wasm-parity-invariant.md) |
+| [`A-Grade: #6`](#a-grade-6-refinement-type-predicates-silently-discarded-in-hir) | `agam_hir` | `{v: i32 | v > 0}` drops predicate with `..` at `lower.rs:1174`, compiling without constraint | 🔴 **Still Exists** | [Spec 008](file:///c:/Users/ksvik/Projects/Agam-Lang/.agent/specs/syntax/008-refinement-types-reject.md) |
+| [`B-Grade: #4`](#b-grade-4-inconsistent-struct-literal-disambiguation-heuristics) | `agam_parser` | Two conflicting heuristics (`looks_like_struct_literal` vs raw `peek_at(1)`) for struct literals | 🔴 **Still Exists** | [Spec 004](file:///c:/Users/ksvik/Projects/Agam-Lang/.agent/specs/syntax/004-struct-literal-restrictions.md) |
+| [`B-Grade: #5`](#b-grade-5-syntax-dialects-unenforced-in-parser) | `agam_parser` | Parser lacks dialect awareness; colon-indent and braces can be mixed freely in any file | 🔴 **Still Exists** | [Spec 006](file:///c:/Users/ksvik/Projects/Agam-Lang/.agent/specs/syntax/006-dialect-enforcement.md) |
+| [`B-Grade: #6`](#b-grade-6-var-and-base-dynamic-are-misleading-no-ops) | `agam_ast` / `agam_lexer` | `var` collapses to untyped `Any`; `@lang.base.dynamic` has identical behavior to static base | 🔴 **Still Exists** | [Spec 007](file:///c:/Users/ksvik/Projects/Agam-Lang/.agent/specs/syntax/007-remove-var-and-dynamic-profile.md) |
+| [`C-Grade: #1`](#c-grade-1-cli-surface-bloat-before-registry-launch) | `agam_driver` | 31+ top-level CLI subcommands with overlapping execution, supply chain, and agent verbs | 🔴 **Still Exists** | [Spec 009](file:///c:/Users/ksvik/Projects/Agam-Lang/.agent/specs/syntax/009-cli-verb-consolidation.md) |
 
 ---
 
@@ -127,3 +135,84 @@
 - **Symptoms**: `python scripts/doctest_check.py` fails on ~15 documentation chapters due to outdated syntax (e.g. `Int` instead of `i32`, unsupported `.to_string()`, invalid enum match arrows).
 - **Root Cause**: Documentation chapters written before syntax stabilization drift from verified compiler reality.
 - **Fix Strategy**: Remediate all documentation code fences to adhere to verified syntax in `note.md`; integrate into CI.
+
+---
+
+### S-Grade: #3: Silent Wrong-Mode Lexing with Leading File Comments
+- **Index**: `S-Grade: #3`
+- **Component**: `crates/core/agam_lexer/src/lexer.rs:52-71`
+- **Fixed?**: 🔴 **Still Exists** (Tracked in [Spec 003](file:///c:/Users/ksvik/Projects/Agam-Lang/.agent/specs/syntax/003-manifest-syntax-profile.md))
+- **Symptoms**: Files starting with license comments or copyright notices (e.g., `// Copyright 2026\n@lang.advance`) are silently lexed in `BaseStatic` mode, triggering spurious `expected expression, found Indent` errors.
+- **Root Cause**: `detect_mode` uses `eat_while` that only skips whitespace and BOM, stopping at the first `/` of a comment. It fails all `@lang` prefixes and silently falls back to `BaseStatic`.
+- **Fix Strategy**: Lift package syntax mode into `agam.toml` (`[project] syntax = "advance"`). Enforce directive placement to be the first non-comment token or emit `E0140`.
+
+---
+
+### A-Grade: #4: No Call Arity and Argument Type Checking in Sema
+- **Index**: `A-Grade: #4`
+- **Component**: `crates/middle/agam_sema/src/checker.rs:368-383`
+- **Fixed?**: 🔴 **Still Exists** (Tracked in [Spec 002](file:///c:/Users/ksvik/Projects/Agam-Lang/.agent/specs/syntax/002-call-arity-checking.md))
+- **Symptoms**: Calling a function with the wrong number of arguments (e.g., `add(1, 2, 3)` for `fn add(a: i32, b: i32)`) compiles without error.
+- **Root Cause**: `ExprKind::Call` handling in `checker.rs` does not compare argument counts or unify argument types against callee parameters; it merely calls `self.infer_expr(callee)` and returns a fresh type variable.
+- **Fix Strategy**: Implement call-site arity and argument type validation in `agam_sema`, and explicitly declare builtin `print`/`println` as variadic so legitimate multi-arg printing remains valid.
+
+---
+
+### A-Grade: #5: Silent No-Op Syscall in Cranelift JIT
+- **Index**: `A-Grade: #5`
+- **Component**: `crates/backends/agam_jit/src/lib.rs`
+- **Fixed?**: 🔴 **Still Exists** (Tracked in [WASM Parity Invariant](file:///c:/Users/ksvik/Projects/Agam-Lang/.agent/rules/wasm-parity-invariant.md))
+- **Symptoms**: Syscall operations emit real inline assembly in LLVM AOT, but return `default_value(0)` as a silent no-op in Cranelift JIT.
+- **Root Cause**: Absence of JIT syscall emulation or host trampoline execution.
+- **Fix Strategy**: Provide runtime syscall trampolines in `agam_runtime` or explicitly reject unsupported syscalls in JIT rather than silently returning 0.
+
+---
+
+### A-Grade: #6: Refinement Type Predicates Silently Discarded in HIR Lowering
+- **Index**: `A-Grade: #6`
+- **Component**: `crates/middle/agam_hir/src/lower.rs:1174`
+- **Fixed?**: 🔴 **Still Exists** (Tracked in [Spec 008](file:///c:/Users/ksvik/Projects/Agam-Lang/.agent/specs/syntax/008-refinement-types-reject.md))
+- **Symptoms**: Refinement types like `{v: i32 | v > 0}` parse successfully but provide zero verification or runtime assertions.
+- **Root Cause**: `lower.rs:1174` matches `TypeExprKind::Refined { base, .. } => self.resolve_type_expr(base)`, silently discarding the predicate AST with `..`.
+- **Fix Strategy**: Explicitly reject refinement types with error `E0180` ("refinement types are parsed but not checked") until `agam_smt` solver integration is ready.
+
+---
+
+### B-Grade: #4: Inconsistent Struct-Literal Disambiguation Heuristics
+- **Index**: `B-Grade: #4`
+- **Component**: `crates/core/agam_parser/src/parser.rs:60-96` & `1238-1253`
+- **Fixed?**: 🔴 **Still Exists** (Tracked in [Spec 004](file:///c:/Users/ksvik/Projects/Agam-Lang/.agent/specs/syntax/004-struct-literal-restrictions.md))
+- **Symptoms**: Multiline struct literals work in path expressions via `looks_like_struct_literal` but fail in postfix loops due to fixed lookahead (`peek_at(1) == Identifier`) that does not skip layout tokens.
+- **Root Cause**: Two conflicting disambiguation heuristics in different parser positions.
+- **Fix Strategy**: Replace ad-hoc lookaheads with Rust-style restriction flags (`NO_STRUCT_LITERAL`) threaded through condition and match-scrutinee positions.
+
+---
+
+### B-Grade: #5: Syntax Dialects Unenforced in Parser
+- **Index**: `B-Grade: #5`
+- **Component**: `crates/core/agam_parser/src/parser.rs:1164-1178`
+- **Fixed?**: 🔴 **Still Exists** (Tracked in [Spec 006](file:///c:/Users/ksvik/Projects/Agam-Lang/.agent/specs/syntax/006-dialect-enforcement.md))
+- **Symptoms**: `@lang.advance` files can use Pythonic colon-indent blocks, and `@lang.base` files can use curly braces, with no diagnostics.
+- **Root Cause**: `agam_parser` has no `SyntaxMode` field and accepts both block styles unconditionally in `parse_block`.
+- **Fix Strategy**: Pass `SyntaxMode` into the parser and enforce block delimiters (curly braces for advance, colon-indent for base) with `E0160`/`E0161`.
+
+---
+
+### B-Grade: #6: `var` and `@lang.base.dynamic` Are Misleading No-Ops
+- **Index**: `B-Grade: #6`
+- **Component**: `crates/core/agam_lexer/src/lexer.rs` & `crates/core/agam_ast/src/types.rs`
+- **Fixed?**: 🔴 **Still Exists** (Tracked in [Spec 007](file:///c:/Users/ksvik/Projects/Agam-Lang/.agent/specs/syntax/007-remove-var-and-dynamic-profile.md))
+- **Symptoms**: `var` is marketed as a dynamic typing mode but merely lowers to untyped `Any` without dynamic dispatch or runtime tags. `@lang.base.dynamic` has identical behavior to static base.
+- **Root Cause**: Dynamic typing was never hooked up to runtime tagging or dispatch.
+- **Fix Strategy**: Remove `var` and `@lang.base.dynamic`; make dynamic typing explicit via `let x: Any = ...`.
+
+---
+
+### C-Grade: #1: CLI Surface Bloat Before Registry Launch
+- **Index**: `C-Grade: #1`
+- **Component**: `crates/tooling/agam_driver/src/cli.rs`
+- **Fixed?**: 🔴 **Still Exists** (Tracked in [Spec 009](file:///c:/Users/ksvik/Projects/Agam-Lang/.agent/specs/syntax/009-cli-verb-consolidation.md))
+- **Symptoms**: 31+ top-level subcommands clutter `--help` and overlap in scope (`run`/`exec`/`dev`/`daemon`).
+- **Root Cause**: Accumulation of experimental and tooling commands without namespace discipline.
+- **Fix Strategy**: Consolidate to 13 core verbs and move utility/agent verbs behind `agamc tool <subcommand>` and `agamc registry <subcommand>`.
+

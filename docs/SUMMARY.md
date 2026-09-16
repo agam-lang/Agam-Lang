@@ -10,6 +10,22 @@
 [Multi-Target Codegen Specification](MULTI_TARGET_CODEGEN_SPECIFICATION.md)
 [Preface & Reader Roadmap](front_matter/00_preface_and_roadmap.md)
 [One-Page Syntax Cheat Sheet](CHEATSHEET.md)
+[Grammar EBNF Reference](grammar.ebnf)
+
+# Language Specifications & RFCs
+- [Syntax & Tooling Redesign Master Index](syntax_redesign/000-INDEX.md)
+- [Comprehensive Language DX & Ecosystem Audit](syntax_redesign/AGAM-DX-AUDIT.md)
+- [Spec 001: Base-Mode Type Declarations](syntax_redesign/001-base-mode-type-declarations.md)
+- [Spec 002: Call Arity & Argument Checking](syntax_redesign/002-call-arity-checking.md)
+- [Spec 003: Manifest Syntax Profile & Directive Placement](syntax_redesign/003-manifest-syntax-profile.md)
+- [Spec 004: Struct-Literal Restriction Flags](syntax_redesign/004-struct-literal-restrictions.md)
+- [Spec 005: Blocks as Expressions](syntax_redesign/005-blocks-as-expressions.md)
+- [Spec 006: Dialect Enforcement](syntax_redesign/006-dialect-enforcement.md)
+- [Spec 007: Remove `var` & `@lang.base.dynamic`](syntax_redesign/007-remove-var-and-dynamic-profile.md)
+- [Spec 008: Refinement Types: Reject Explicitly](syntax_redesign/008-refinement-types-reject.md)
+- [Spec 009: CLI Verb Consolidation](syntax_redesign/009-cli-verb-consolidation.md)
+- [Spec 010: Manifest Completion](syntax_redesign/010-manifest-completion.md)
+
 
 # Part I: Systems Programming Foundations
 - [Chapter 1: The C Execution & Memory Model](part_1_foundations/ch01_c_memory_model.md)

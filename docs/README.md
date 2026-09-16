@@ -47,6 +47,8 @@ Foundational execution models, C memory dynamics, pointers, cache hierarchy, sta
 
 ### [Part II: Language Design & Frontend Mechanics](part_2_frontend/ch03_lexical_analysis.md)
 Lexical scanning, UTF-8 span tracking, Top-Down Operator Precedence (Pratt) parsing, AST hierarchy, bidirectional type inference, and symbol resolution.
+- **Active RFCs & Syntax Specifications**: See [`docs/syntax_redesign/000-INDEX.md`](syntax_redesign/000-INDEX.md) and [`docs/syntax_redesign/AGAM-DX-AUDIT.md`](syntax_redesign/AGAM-DX-AUDIT.md) for the complete 10-part language redesign specs (001–010).
+
 
 ### [Part III: Compiler Architecture & Optimization Theory](part_3_middle_end/ch07_hir_and_mir.md)
 Multi-level intermediate representations (HIR & MIR), Dominance Frontiers, SSA transformation, and deep coverage of middle-end optimization passes (SCCP, GVN, DCE, Inlining, LICM, Strength Reduction, Loop Unrolling, and Tail Call Optimization).

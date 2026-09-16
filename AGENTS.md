@@ -15,6 +15,7 @@ Continuous session across Gemini, Claude, Codex. Rotate models freely.
 - **Parity Truth**: `note.md`
 - **Problem Ledger**: `issues.md`
 - **Active Phase**: `.agent/specs/active/current.md` | Next: `.agent/specs/active/next.md`
+- **Syntax & Tooling Redesign Specs**: `.agent/specs/syntax/000-INDEX.md`
 - **Rules**: `.agent/rules/` (`bug-ledger.md`, `language-guardrails.md`, `zero-panic-invariant.md`, `wasm-parity-invariant.md`, `commit-discipline.md`, `truth-first-docs.md`, `error-message-quality.md`, `project-structure.md`, `token-efficiency.md`, `context-hygiene.md`, `compiler-literature.md`, `algorithm-synthesis.md`)
 - **Skills** (`.agent/skills/`): `cargo-lens`, `language-guard`, `caveman`, `audit-harden`, `unwrap-ratchet`, `diff-fuzz`, `spec-archiver`, `benchmark-guard`, `doctest-guard`, `golden-test`, `safe-commit`.
 
