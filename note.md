@@ -273,5 +273,81 @@ On modern mobile APUs, the dedicated NPU is architected for low-power (5W) conti
 3. **Tier 3: Academic MLIR-AIE Sandbox (4/10 Daily Utility — Experimental)**:
    * Keep `agam_mir::dialect` extensible, but isolate any spatial AIE tile routing experiments in a separate tooling crate (`agam_aie`), strictly preventing experimental FPGA/NPU toolchains from blocking the compiler core.
 
+---
 
+## 9. AMD uProf Micro-Architectural Profiling & CLI Runbook
 
+### 9.1 Hardware Target & Developer Purpose
+* **Target CPU**: AMD Ryzen 7 7840HS (Zen 4 Phoenix, Family 25 / 0x19, Model 117 / 0x75, Stepping 2).
+* **Tool**: AMD uProf (GUI & CLI `AMDuProfCLI.exe`).
+* **Developer Purpose for Agam Compiler**:
+  * **Instruction-Based Sampling (IBS)**: Precise instruction execution sampling with hardware tagging (IBS Fetch & IBS Op) to identify branch penalties, store-to-load forwarding stalls, and retirement latencies without shadow instrumentation drift.
+  * **Cache Locality & Hierarchy**: Detailed attribution of L1 Data, L2 Data, and L3 Core Complex Die (CCD) cache misses across Agam runtime allocations, array slicing, and tensor indexing.
+  * **SIMD & Loop Vectorization Efficiency**: Quantifying vector register pressure, AVX-512 256-bit vs 512-bit instruction issue rates, and execution pipe saturation (Pipe 0/1/2/3).
+  * **Branch Prediction Analysis**: Tracking branch misprediction hotspots in Pratt parsing loops, match dispatch tables, and lexer token synchronization.
+
+### 9.2 OS Capability Matrix: Windows 11 vs. Bare-Metal Linux vs. WSL2
+
+| Metric / Capability | Bare-Metal Windows 11 (HP Laptop 1) | Bare-Metal Linux (Ubuntu 24.04+) | WSL2 (Virtual Machine Platform) |
+|---|:---:|:---:|:---:|
+| **Hardware Core PMU Counters** (Cycles, IPC, Ret. Inst) | 🟢 **Full Native Support** | 🟢 **Full Native Support** | 🔴 **Blocked** (No MSR access) |
+| **IBS (Instruction-Based Sampling)** | 🟢 **Full Native Support** | 🟢 **Full Native Support** | 🔴 **Blocked** (Virtual Hyper-V CPU) |
+| **L1/L2/L3 Cache Miss Profiling** | 🟢 **Full Native Support** | 🟢 **Full Native Support** | 🔴 **Blocked** |
+| **Branch Misprediction Analysis** | 🟢 **Full Native Support** | 🟢 **Full Native Support** | 🔴 **Blocked** |
+| **Energy & Package Power (RAPL)** | 🟢 **Full Native Support** | 🟢 **Full Native Support** | 🔴 **Blocked** |
+| **Assembly & Source Hotspot Attribution** | 🟢 **Full Native Support** | 🟢 **Full Native Support** | 🟡 Degraded (Timer-only) |
+| **ROCm / GPU Profiling** | 🟡 Direct3D/DirectML Only | 🟢 Full ROCm Profiling | 🔴 Blocked |
+| **ftrace / OS Thread Scheduling** | 🟡 ETW (Event Tracing) | 🟢 Full ftrace / perf | 🟡 Guest-only ftrace |
+
+> **Key Architectural Takeaway**: Bare-metal Windows 11 natively supports 100% of all required compiler micro-architectural counters (IBS, IPC, L1-L3 cache, branch mispredictions, and power). Linux is only required if profiling ROCm GPU compute or kernel-level ftrace schedulers.
+
+### 9.3 Hyper-V / WSL2 PMU Virtualization Conflict & Root Cause
+When WSL2, Windows Sandbox, or "Virtual Machine Platform" is active, Windows loads the **Hyper-V Hypervisor** beneath the host operating system (`hypervisorlaunchtype = auto`).
+
+* **Root Cause**:
+  1. The Hyper-V root partition intercepts access to the AMD Zen 4 Performance Monitoring Unit (PMU) Model-Specific Registers (MSRs: `MSR0000_0200`–`MSR0000_020B`, and IBS MSRs `MSRC001_1030`–`MSRC001_103B`).
+  2. Hyper-V does not expose virtual PMU (vPMC) MSR passthrough to the host driver without enterprise virtualization profiles.
+  3. Consequently, AMD uProf detects that MSR programming is trapped and triggers the warning:
+     > *"WSL2 is enabled, which enables 'Virtual Machine Platform'. Only Timer-based profiling available."*
+  4. In this state, hardware events (IBS, cache misses, branch penalties) cannot be measured; uProf degrades strictly into statistical timer-based sampling (coarse call-stack sampling with zero CPU pipeline insight). Furthermore, forcing vPMC in nested hypervisors (e.g. VMware Workstation) triggers known fatal driver crashes (VMware KB 81623).
+
+### 9.4 Operational Switching Runbook
+
+Agam compiler profiling requires full hardware PMU counters. Follow this simple zero-risk switching runbook:
+
+#### Mode A: 100% Bare-Metal Profiling (Unlock Full IBS, Cache & PMU)
+When running micro-architectural benchmark sweeps, SIMD optimization proofs, or deep profiling:
+```cmd
+:: Run elevated in Windows Administrator Command Prompt or PowerShell:
+bcdedit /set hypervisorlaunchtype off
+```
+* **Action**: Restart Windows.
+* **Result**: Hyper-V is disabled. Windows runs bare-metal on the Zen 4 silicon. Full IBS, IPC, branch prediction, and L1/L2/L3 cache counters are **100% unlocked** in AMD uProf GUI and CLI.
+* *(Note: WSL2 will temporarily not launch in this mode).*
+
+#### Mode B: Restore WSL2 & Virtualization
+When development requires WSL2 (e.g., Linux Clang AOT cross-builds, Miniconda Linux sandbox):
+```cmd
+:: Run elevated in Windows Administrator Command Prompt or PowerShell:
+bcdedit /set hypervisorlaunchtype auto
+```
+* **Action**: Restart Windows.
+* **Result**: Hyper-V and Virtual Machine Platform are restored. WSL2, Docker Desktop, Windows Sandbox, and VMware VMs operate normally.
+
+### 9.5 Automated CLI Profiling Runbook (`AMDuProfCLI`)
+AMD uProf includes a scriptable command-line interface (`AMDuProfCLI.exe`) that can be driven automatically by Agam's benchmark harness (`scripts/benchmark_guard.py`):
+
+```powershell
+# 1. Profile Core Performance (IPC, Cycles, Retired Instructions, Branch Mispredictions)
+AMDuProfCLI.exe collect --config tbp --output-dir ./profiles/tbp agamc.exe run benchmarks/suites/13_simd_vectorization/bench.agam
+
+# 2. Instruction-Based Sampling (IBS) Execution Profiling (Hardware tagged operations)
+AMDuProfCLI.exe collect --config ibs --output-dir ./profiles/ibs agamc.exe run benchmarks/suites/13_simd_vectorization/bench.agam
+
+# 3. Cache Miss & Memory Locality Profiling (L1-D, L2, L3 Data Misses)
+AMDuProfCLI.exe collect --config assess --output-dir ./profiles/cache agamc.exe run benchmarks/suites/02_numerical_computation/bench.agam
+
+# 4. Generate Machine-Readable Translation Report (CSV)
+AMDuProfCLI.exe report --input-dir ./profiles/ibs/AMDuProf-*.data --output-dir ./profiles/reports/ --format csv
+```
+This enables zero-overhead, reproducible hardware counter regression testing inside Agam's CI and benchmarking infrastructure.
