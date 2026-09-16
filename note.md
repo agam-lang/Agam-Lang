@@ -351,3 +351,76 @@ AMDuProfCLI.exe collect --config assess --output-dir ./profiles/cache agamc.exe 
 AMDuProfCLI.exe report --input-dir ./profiles/ibs/AMDuProf-*.data --output-dir ./profiles/reports/ --format csv
 ```
 This enables zero-overhead, reproducible hardware counter regression testing inside Agam's CI and benchmarking infrastructure.
+
+---
+
+## 10. Multi-Tool Profiling Suite: Visual Studio & NVIDIA Nsight
+
+To achieve complete compiler, runtime, and hardware profiling, Agam leverages three complementary toolchains matching its hybrid CPU/GPU architecture:
+
+```
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                        AGAM COMPILER & HARDWARE PROFILING SUITE                        │
+├────────────────────────────────────────────────────────────────────────────────────────┤
+│ 1. AMD uProf (CLI/GUI)  ──► Zen 4 CPU Silicon: IBS, L1/L2/L3 Caches, PMU MSRs, Branch │
+│ 2. Visual Studio 2026   ──► Windows Native Host: CPU Flamegraphs, Memory Leak, ETW/PDB │
+│ 3. NVIDIA Nsight Suite  ──► RTX 3050 Laptop GPU: CUDA/NVPTX Kernels, TMA, Tensor Cores│
+└────────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 10.1 Microsoft Visual Studio 2026 Diagnostics & Profiling Tools
+* **Installed Suite**: Visual Studio Community 2026 (`18.10.1`) at `C:\Program Files\Microsoft Visual Studio\18\Community`.
+* **Developer Purpose for Agam**:
+  * **PDB & Symbol Resolution**: Full Windows MSVC debug symbol integration for native binaries (`agamc.exe`) and JIT code frames.
+  * **CPU Usage & Sampling Profiler**: Hotspot attribution and interactive flamegraph analysis across compiler passes (`agam_parser` $\rightarrow$ `agam_sema` $\rightarrow$ `agam_mir::opt` $\rightarrow$ `agam_codegen`).
+  * **Memory Usage & Allocation Tracking**: Live heap allocation tracking, identifying buffer fragmentation or leaks in `agam_runtime`'s bump/arena allocator.
+  * **Concurrency Visualizer (ETW)**: Event Tracing for Windows analyzing thread contention, lock convoying, and work-stealing efficiency across `nursery` and rayon worker pools.
+
+#### CLI & Automated Invocations:
+Visual Studio includes standalone command-line diagnostic collection tools (`VSDiagnostics.exe` / `vsinstr.exe`):
+```powershell
+# Locate VS Performance Tools directory
+$VSTools = "C:\Program Files\Microsoft Visual Studio\18\Community\Team Tools\DiagnosticsHub\Collector"
+
+# 1. Collect CPU Usage Session via VSDiagnostics CLI
+& "$VSTools\VSDiagnostics.exe" start 1 /attach:agamc.exe /loadConfig:CpuUsage.json
+
+# 2. Stop Collection and Output .diagsession file
+& "$VSTools\VSDiagnostics.exe" stop 1 /output:./profiles/compiler_profile.diagsession
+
+# 3. Analyze in Visual Studio IDE
+devenv.exe ./profiles/compiler_profile.diagsession
+```
+
+---
+
+### 10.2 NVIDIA Nsight GPU Profiling Suite (RTX 3050 Laptop GPU)
+* **Target Hardware**: NVIDIA GeForce RTX 3050 Laptop GPU (6GB VRAM, Ampere GA107, SM 8.6, Compute Capability 8.6).
+* **Developer Purpose for Agam**:
+  * **Targeting `agam_codegen` GPU Emitter & `@gpu` Kernels**: Agam lowers tensor math and parallel loops to native NVPTX / CUDA kernels (`crates/backends/agam_codegen/src/gpu_emitter.rs`).
+  * **Nsight Systems (`nsys`)**: System-wide timeline visualization capturing CPU thread scheduling, CUDA driver/runtime API calls, host-to-device PCIe memory transfers (`cudaMemcpyAsync`), and GPU kernel execution latencies.
+  * **Nsight Compute (`ncu`)**: Kernel-level micro-architectural profiler for Ampere GPUs measuring Warp Execution Efficiency, Tensor Core utilization, L1/Shared Memory throughput, and Register Spilling.
+
+#### CLI Invocations for Stage 5 & 8 GPU Optimization:
+```powershell
+# 1. System Timeline Profiling (CPU-GPU Interaction & Memory Transfers)
+nsys profile --trace=cuda,nvtx,osrt --output=./profiles/gpu_timeline agamc.exe run benchmarks/suites/05_ml_primitives/matmul.agam
+
+# 2. Deep Kernel Profiling with Nsight Compute (Warp Stall Reasons & Roofline Model)
+ncu --set full --target-processes all --export ./profiles/kernel_analysis agamc.exe run benchmarks/suites/05_ml_primitives/matmul.agam
+
+# 3. Memory Bandwidth & Shared Memory Bank Conflict Check
+ncu --metrics sm__sass_average_data_bytes_per_sector_mem_shared.pct,gpu__dram_throughput.avg.pct_of_peak_sustained_elapsed agamc.exe run benchmarks/suites/05_ml_primitives/matmul.agam
+```
+
+---
+
+### 10.3 Comparative Tooling Matrix: When to Use Which Tool
+
+| Profiling Need | Primary Tool | Secondary Tool | What It Measures |
+|---|---|---|---|
+| **CPU SIMD & Loop Optimization** | **AMD uProf** (`AMDuProfCLI`) | Visual Studio | Exact AVX-512 vector pipe saturation, IBS instruction sampling, and branch mispredictions. |
+| **Compiler Host Latency & Memory** | **Visual Studio 2026** | AMD uProf | Source-level CPU flamegraphs, heap allocator tracking, and MSVC debug stack frames. |
+| **GPU Tensor & NVPTX Kernels** | **NVIDIA Nsight Compute** (`ncu`) | Nsight Systems | Tensor Core execution, warp stall reasons, shared memory bank conflicts on RTX 3050. |
+| **Heterogeneous Engine Timeline** | **NVIDIA Nsight Systems** (`nsys`) | Visual Studio (ETW) | CPU-to-GPU memory transfer synchronization and async kernel launches. |
+

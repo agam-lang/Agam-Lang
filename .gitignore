@@ -43,3 +43,7 @@ node_modules/
 # Quarantined & archived ghost repositories (anti-scan)
 /archive/
 archive/
+
+.vs/
+*.diagsession
+

@@ -43,3 +43,21 @@ When profiling on Zen 4 (Ryzen 7 7840HS), use hardware PMU counters to measure m
    ```
 Consult [`note.md`](../../note.md) §9 for the full OS capability matrix and Hyper-V switching runbook.
 
+## Host & GPU Profiling (Visual Studio & NVIDIA Nsight)
+
+When profiling compiler host performance or GPU kernel execution:
+
+1. **Visual Studio Diagnostic Tools (`VSDiagnostics.exe`)**:
+   - Collect CPU usage flamegraphs, memory heap growth, and thread concurrency across compiler passes (`agam_parser` $\rightarrow$ `agam_sema` $\rightarrow$ `agam_mir::opt` $\rightarrow$ `agam_codegen`).
+   - Detailed CLI usage documented in [`note.md`](../../note.md) §10.1.
+
+2. **NVIDIA Nsight Suite (RTX 3050 Laptop GPU)**:
+   - **Nsight Systems (`nsys`)**: Trace CUDA API calls, host-to-device PCIe copies, and async timeline behavior.
+     ```powershell
+     nsys profile --trace=cuda,nvtx,osrt --output=./profiles/gpu_timeline agamc.exe run benchmarks/suites/05_ml_primitives/matmul.agam
+     ```
+   - **Nsight Compute (`ncu`)**: Analyze GPU kernel warp stall reasons, Tensor Core utilization, and memory roofline.
+     ```powershell
+     ncu --set full --target-processes all --export ./profiles/kernel_analysis agamc.exe run benchmarks/suites/05_ml_primitives/matmul.agam
+     ```
+   - Detailed comparative matrix documented in [`note.md`](../../note.md) §10.3.
